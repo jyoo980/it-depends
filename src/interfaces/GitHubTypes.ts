@@ -7,6 +7,7 @@ export interface FileInfo {
 export interface CommitInfo {
     sha: string,
     author: any,
+    message: string,
     additions: number,
     deletions: number,
     filesChanged: Array<FileInfo>

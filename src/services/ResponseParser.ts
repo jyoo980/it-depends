@@ -17,6 +17,7 @@ export default class ResponseParser {
         return {
             sha: rawCommit["sha"],
             author: rawCommit["author"],
+            message: rawCommit["commit"]["message"],
             additions: rawCommit["stats"]["additions"],
             deletions: rawCommit["stats"]["deletions"],
             filesChanged: this.extractFileInfo(rawCommit["files"]),
