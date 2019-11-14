@@ -5,7 +5,11 @@ export interface IRestResponse {
     body: any,
 }
 
-export default class RestClient {
+export interface IRestClient {
+    get(url: string): Promise<IRestResponse>
+}
+
+export default class RestClient implements IRestClient {
 
     private readonly axios;
 
