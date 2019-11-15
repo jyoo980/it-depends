@@ -55,13 +55,13 @@ export default class URLBuilder {
         return `${this.BASE_URL}/${owner}/${repo}/commits?until=${endDate}&access_token=${this.accessToken}`;
     }
 
-    public getOwner(repoUrl: string): string {
+    private getOwner(repoUrl: string): string {
         const lastSlashIndex: number = repoUrl.lastIndexOf("/");
         const ownerStartIndex: number = repoUrl.lastIndexOf(".com/") +5;
         return repoUrl.substring(ownerStartIndex, lastSlashIndex);
     }
 
-    public getRepoName(repoUrl: string): string {
+    private getRepoName(repoUrl: string): string {
         const lastSlashIndex: number = repoUrl.lastIndexOf("/");
         return repoUrl.substring(lastSlashIndex + 1);
     }

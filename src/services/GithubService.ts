@@ -2,7 +2,7 @@ import IRestClient, {IRestResponse} from "../rest/RestClient";
 import URLBuilder from "./URLBuilder";
 import {CommitInfo} from "../interfaces/GitHubTypes";
 import ResponseParser from "./ResponseParser";
-import FileSystem from "../util/FileSystem";
+import {ICommitCache} from "./GitCommitCache";
 
 export interface GithubServiceError extends Error {
     message: string,
@@ -13,42 +13,48 @@ export default class GithubService {
     private readonly restClient: IRestClient;
     private readonly urlBuilder: URLBuilder;
     private readonly responseParser: ResponseParser;
-    private readonly fileSystem: FileSystem;
+    private readonly cache: ICommitCache;
 
-    constructor(restClient: IRestClient) {
+    constructor(restClient: IRestClient, cache: ICommitCache) {
         this.restClient = restClient;
-        this.urlBuilder = new URLBuilder( "9429855a73709cee968ae79fcfe98210a501543b");
+        this.urlBuilder = new URLBuilder( "3fc9ac24e39a5705954fadf7c30633ae9193c007");
         this.responseParser = new ResponseParser();
-        this.fileSystem = new FileSystem();
+        this.cache = cache;
     }
 
     public async getAndSaveAllCommits(repoUrl: string): Promise<void> {
-        const now: string = new Date().toISOString();
         try {
-            const allCommitsToNow = await this.listCommitsUpTo(repoUrl, now);
-            const commitsASObj = this.mapToObj(allCommitsToNow);
-            const commitsToWrite = JSON.stringify(commitsASObj);
-            const owner = this.urlBuilder.getOwner(repoUrl);
-            const repo = this.urlBuilder.getRepoName(repoUrl);
-            await this.fileSystem.write("./data", `${owner}-${repo}-.txt`, commitsToWrite);
+            const historyExists: boolean = await this.cache.exists(repoUrl);
+            if (!historyExists) {
+                const now: string = new Date().toISOString();
+                const allCommitsToNow: Array<CommitInfo> = await this.listCommitsUpTo(repoUrl, now);
+                await this.cache.persistCommits(repoUrl, allCommitsToNow);
+            }
         } catch (err) {
             console.warn(err);
             throw { message: err.message } as GithubServiceError
         }
     }
 
-    public async listCommitsUpTo(repoUrl: string, dateString: string): Promise<Map<string, CommitInfo>> {
+    public async listCommitsUpTo(repoUrl: string, dateString: string): Promise<Array<CommitInfo>> {
         try {
-            const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateString);
-            let rawCommits = await this.restClient.get(requestUrl);
-            let commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
-            return await this.hydrateCommits(repoUrl, commitSHAs);
+            const historyExists: boolean = await this.cache.exists(repoUrl);
+            if (!historyExists) {
+                const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateString);
+                let rawCommits = await this.restClient.get(requestUrl);
+                let commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
+                return await this.hydrateCommits(repoUrl, commitSHAs);
+            } else {
+                return this.cache.readCommitsUpTo(repoUrl, dateString);
+            }
         } catch (err) {
             console.warn(err);
         }
     }
 
-    private async hydrateCommits(repoUrl: string, commitSHAs: Array<string>): Promise<Map<string, CommitInfo>> {
+    // TODO: make method for getting commits between a date.
+
+    private async hydrateCommits(repoUrl: string, commitSHAs: Array<string>): Promise<Array<CommitInfo>> {
         const detailedCommitRequests = commitSHAs.map((sha) => {
             const url = this.urlBuilder.buildGetSingleCommitUrl(repoUrl, sha);
             return this.restClient.get(url);
@@ -60,10 +66,5 @@ export default class GithubService {
         } catch (err) {
             throw err;
         }
-    }
-
-    // FROM: https://gist.github.com/lukehorvat/133e2293ba6ae96a35ba
-    private mapToObj(commitMap: Map<string, CommitInfo>): {[key: string]: CommitInfo } {
-        return Array.from(commitMap.entries()).reduce((main, [key, value]) => ({...main, [key]: value}), {})
     }
 }

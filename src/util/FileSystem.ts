@@ -17,4 +17,24 @@ export default class FileSystem {
             throw { message: err.message } as FileSystemError;
         }
     }
+
+    public async read(dir: string, fileName: string): Promise<string> {
+        const fullPath: string = `${dir}/${fileName}`;
+        try {
+            return await fs.readFile(fullPath, "utf-8");
+        } catch (err) {
+            console.warn(`FileSystem::read failed with error: ${err}`);
+            throw { message: err.message } as FileSystemError;
+        }
+    }
+
+    public async isOnDisk(dir: string, fileName: string): Promise<boolean> {
+        const fullPath: string = `${dir}/${fileName}`;
+        try {
+            return await fs.pathExists(fullPath);
+        } catch (err) {
+            console.log(`FileSystem::${fullPath} appears to not exist`);
+            return false;
+        }
+    }
 }

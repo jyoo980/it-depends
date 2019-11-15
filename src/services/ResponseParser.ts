@@ -2,11 +2,10 @@ import {CommitInfo, FileInfo} from "../interfaces/GitHubTypes";
 
 export default class ResponseParser {
 
-    public buildCommitMap(rawCommitData: Array<any>): Map<string, CommitInfo> {
-        return rawCommitData.reduce((commitMap: Map<string, CommitInfo>, rawCommit) => {
-            const hydratedInfo = this.extractCommitInfo(rawCommit);
-            return commitMap.set(hydratedInfo.sha, hydratedInfo);
-        }, new Map());
+    public buildCommitMap(rawCommitData: Array<any>): Array<CommitInfo> {
+        return rawCommitData.map((rawCommit) => {
+            return this.extractCommitInfo(rawCommit);
+        });
     }
 
     public getCommitSHAs(rawCommitData: Array<any>): Array<string> {
@@ -18,6 +17,7 @@ export default class ResponseParser {
             sha: rawCommit["sha"],
             author: rawCommit["author"],
             message: rawCommit["commit"]["message"],
+            date: rawCommit["commit"]["committer"]["date"],
             additions: rawCommit["stats"]["additions"],
             deletions: rawCommit["stats"]["deletions"],
             filesChanged: this.extractFileInfo(rawCommit["files"]),
