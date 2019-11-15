@@ -52,7 +52,13 @@ export default class URLBuilder {
     public buildListCommitsUrl(repoUrl: string, endDate: string): string {
         const owner: string = this.getOwner(repoUrl);
         const repo: string = this.getRepoName(repoUrl);
-        return `${this.BASE_URL}/${owner}/${repo}/commits?until=${endDate}&access_token=${this.accessToken}`;
+        return `${this.BASE_URL}/${owner}/${repo}/commits?until=${endDate}&per_page=100&access_token=${this.accessToken}`;
+    }
+
+    public buildListContributors(repoUrl: string): string {
+        const owner: string = this.getOwner(repoUrl);
+        const repo: string = this.getRepoName(repoUrl);
+        return `${this.BASE_URL}/${owner}/${repo}/contributors`;
     }
 
     private getOwner(repoUrl: string): string {

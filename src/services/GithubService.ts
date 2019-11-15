@@ -26,12 +26,13 @@ export default class GithubService {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
-                const now: string = new Date().toISOString();
-                const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, now);
-                const rawCommits = await this.restClient.get(requestUrl);
-                const commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
-                const richCommits: Array<CommitInfo> = await this.hydrateCommits(repoUrl, commitSHAs);
-                await this.cache.persistCommits(repoUrl, richCommits);
+                let totalNumCommits = await this.getNumCommits(repoUrl);
+                let retrievedCommits: Array<CommitInfo> = new Array<CommitInfo>();
+                while (retrievedCommits.length < totalNumCommits) {
+                    const commits = await this.getMoreCommits(retrievedCommits, repoUrl);
+                    retrievedCommits = retrievedCommits.concat(commits);
+                }
+                await this.cache.persistCommits(repoUrl, retrievedCommits);
             }
         } catch (err) {
             console.warn(err);
@@ -39,11 +40,24 @@ export default class GithubService {
         }
     }
 
+    private async getMoreCommits(retrievedCommits: Array<CommitInfo>, repoUrl: string): Promise<Array<CommitInfo>> {
+        let dateUpTo: string;
+        if (retrievedCommits.length === 0) {
+            dateUpTo = new Date().toISOString();
+        } else {
+            dateUpTo = retrievedCommits[retrievedCommits.length - 1].date;
+        }
+        const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateUpTo);
+        const rawCommits = await this.restClient.get(requestUrl);
+        const commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
+        return await this.hydrateCommits(repoUrl, commitSHAs);
+    }
+
     public async listCommitsUpTo(repoUrl: string, dateString: string): Promise<Array<CommitInfo>> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
-                this.getAndSaveAllCommits(repoUrl);
+                await this.getAndSaveAllCommits(repoUrl);
             }
             return await this.cache.readCommitsUpTo(repoUrl, dateString);
         } catch (err) {
@@ -73,6 +87,17 @@ export default class GithubService {
             let rawCommitData: any[] = rawResponses.map((response) => response.body);
             return this.responseParser.buildCommitMap(rawCommitData);
         } catch (err) {
+            throw err;
+        }
+    }
+
+    private async getNumCommits(repoUrl: string): Promise<number> {
+        const requestUrl = this.urlBuilder.buildListContributors(repoUrl);
+        try {
+            const response = await this.restClient.get(requestUrl);
+            return this.responseParser.extractNumCommits(response.body);
+        } catch (err) {
+            console.warn(`GithubService::Error retrieving number of commits from: ${repoUrl}`);
             throw err;
         }
     }

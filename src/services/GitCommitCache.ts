@@ -18,7 +18,6 @@ export default class GitCommitCache implements ICommitCache {
         this.commitCache = new Map();
     }
 
-
     public async exists(repoUrl: string): Promise<boolean> {
         const key: string = this.stripRepoName(repoUrl);
         if (this.commitCache.has(key)) {

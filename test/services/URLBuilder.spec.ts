@@ -30,6 +30,6 @@ describe("URLBuilder tests", () => {
     it("should correctly build a GET request URL for listing all commits on a repo", () => {
         const currentTime: string = new Date().toISOString();
         const requestUrl: string = builder.buildListCommitsUrl(sampleRepoUrl, currentTime);
-        expect(requestUrl).to.equal(`https://api.github.com/repos/jyoo980/TypeScript.ts/commits?until=${currentTime}&access_token=${fakeAccessToken}`);
+        expect(requestUrl).to.equal(`https://api.github.com/repos/jyoo980/TypeScript.ts/commits?until=${currentTime}&per_page=100access_token=${fakeAccessToken}`);
     });
 });

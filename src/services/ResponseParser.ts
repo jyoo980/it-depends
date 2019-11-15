@@ -33,4 +33,10 @@ export default class ResponseParser {
             } as FileInfo
         });
     }
+
+    public extractNumCommits(contributors: any[]): number {
+        return contributors.reduce((numCommits, contributorData) => {
+            return numCommits + contributorData["contributions"];
+        }, 0);
+    }
 }
