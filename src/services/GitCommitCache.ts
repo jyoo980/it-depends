@@ -28,8 +28,7 @@ export default class GitCommitCache implements ICommitCache {
             return await this.fileSystem.isOnDisk("./data", `${key}.txt`);
         } catch (err) {
             // The function above should never throw an error.
-            console.log(`GitCommitCache::checking for existence of: ${key} failed`);
-            throw err;
+            console.error(`GitCommitCache::checking for existence of: ${key} failed`);
         }
     }
 
@@ -37,29 +36,17 @@ export default class GitCommitCache implements ICommitCache {
         const key = this.stripRepoName(repoUrl);
         this.commitCache.set(key, commitInfo);
         const commitsToWrite = JSON.stringify(commitInfo);
-        try {
-            await this.fileSystem.write("./data", `${key}.txt`, commitsToWrite);
-        } catch (err) {
-            throw err;
-        }
+        await this.fileSystem.write("./data", `${key}.txt`, commitsToWrite);
     }
 
     public async readCommitsUpTo(repoUrl: string, date: string) {
-        try {
-            const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
-            return this.filterCommitsBefore(commitData, date);
-        } catch (err) {
-            throw err;
-        }
+        const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
+        return this.filterCommitsBefore(commitData, date);
     }
 
     public async readCommitsBetween(repoUrl: string, startDate: string, endDate: string) {
-        try {
-            const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
-            return this.filterCommitsBetween(commitData, startDate, endDate);
-        } catch (err) {
-            throw err;
-        }
+        const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
+        return this.filterCommitsBetween(commitData, startDate, endDate);
     }
 
     public async getCommitData(repoUrl: string): Promise<Array<CommitInfo>> {
@@ -67,13 +54,8 @@ export default class GitCommitCache implements ICommitCache {
         if (this.commitCache.has(key)) {
             return this.commitCache.get(key);
         }
-        try {
-            const rawData = await this.fileSystem.read("./data", `${key}.txt`);
-            return JSON.parse(rawData) as Array<CommitInfo>;
-        } catch (err) {
-            console.log(err);
-            throw err;
-        }
+        const rawData = await this.fileSystem.read("./data", `${key}.txt`);
+        return JSON.parse(rawData) as Array<CommitInfo>;
     }
 
     public filterCommitsBefore(commits: Array<CommitInfo>, endDate: string): Array<CommitInfo> {

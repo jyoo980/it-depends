@@ -55,7 +55,13 @@ export default class URLBuilder {
         return `${this.BASE_URL}/${owner}/${repo}/commits?until=${endDate}&per_page=100&access_token=${this.accessToken}`;
     }
 
-    public buildListContributors(repoUrl: string): string {
+    /**
+     * Builds the request URL for
+     * GET /repos/:owner/:repo/contributors
+     *
+     * @param repoUrl the url of the repo for which we want to build the URL
+     */
+    public buildListContributorsUrl(repoUrl: string): string {
         const owner: string = this.getOwner(repoUrl);
         const repo: string = this.getRepoName(repoUrl);
         return `${this.BASE_URL}/${owner}/${repo}/contributors`;
