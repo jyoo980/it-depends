@@ -2,6 +2,7 @@ import { expect } from "chai";
 import GithubService from "../../src/services/GithubService";
 import RestClient from "../../src/rest/RestClient";
 import GitCommitCache from "../../src/services/GitCommitCache";
+import {CommitInfo} from "../../src/interfaces/GitHubTypes";
 
 describe("GithubService tests", () => {
 
@@ -11,11 +12,15 @@ describe("GithubService tests", () => {
 
     it("should return a list of commits up to the latest commit", async () => {
         const sampleRepo: string = "https://github.com/jyoo980/TypeScript.ts";
+        let totalNumCommits: Array<CommitInfo>;
         ghService = new GithubService(liveRestClient, liveCache);
         try {
-            let commitList = await ghService.getAndSaveAllCommits(sampleRepo);
+            totalNumCommits = await ghService.getAndSaveAllCommits(sampleRepo);
         } catch (err) {
-            expect.fail(err);
+            totalNumCommits = err;
+        } finally {
+            // TODO: gets us back 160, off by one...
+            expect(totalNumCommits.length).to.equal(159);
         }
     });
 });

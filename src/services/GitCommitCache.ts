@@ -3,6 +3,7 @@ import {CommitInfo} from "../interfaces/GitHubTypes";
 
 export interface ICommitCache {
     exists(repoUrl: string): Promise<boolean>;
+    getCommitData(repoUrl: string);
     persistCommits(repoUrl: string, commitInfo: Array<CommitInfo>): Promise<void>;
     readCommitsUpTo(repoUrl: string, date: string);
     readCommitsBetween(repoUrl: string, startDate: string, endDate: string);
@@ -44,9 +45,8 @@ export default class GitCommitCache implements ICommitCache {
     }
 
     public async readCommitsUpTo(repoUrl: string, date: string) {
-        const key = this.stripRepoName(repoUrl);
         try {
-            const commitData: Array<CommitInfo> = await this.getCommitData(key);
+            const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
             return this.filterCommitsBefore(commitData, date);
         } catch (err) {
             throw err;
@@ -54,16 +54,16 @@ export default class GitCommitCache implements ICommitCache {
     }
 
     public async readCommitsBetween(repoUrl: string, startDate: string, endDate: string) {
-        const key = this.stripRepoName(repoUrl);
         try {
-            const commitData: Array<CommitInfo> = await this.getCommitData(key);
+            const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
             return this.filterCommitsBetween(commitData, startDate, endDate);
         } catch (err) {
             throw err;
         }
     }
 
-    private async getCommitData(key: string): Promise<Array<CommitInfo>> {
+    public async getCommitData(repoUrl: string): Promise<Array<CommitInfo>> {
+        const key = this.stripRepoName(repoUrl);
         if (this.commitCache.has(key)) {
             return this.commitCache.get(key);
         }

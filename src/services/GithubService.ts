@@ -22,7 +22,7 @@ export default class GithubService {
         this.cache = cache;
     }
 
-    public async getAndSaveAllCommits(repoUrl: string): Promise<void> {
+    public async getAndSaveAllCommits(repoUrl: string): Promise<Array<CommitInfo>> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
@@ -33,7 +33,9 @@ export default class GithubService {
                     retrievedCommits = retrievedCommits.concat(commits);
                 }
                 await this.cache.persistCommits(repoUrl, retrievedCommits);
+                return retrievedCommits;
             }
+            return await this.cache.getCommitData(repoUrl);
         } catch (err) {
             console.warn(err);
             throw { message: err.message } as GithubServiceError

@@ -10,3 +10,4 @@ test/**/*.spec.js
 test/**/*.spec.js.map
 test/*.map
 node_modules/
+data/
