@@ -5,6 +5,7 @@ export interface ICommitCache {
     exists(repoUrl: string): Promise<boolean>;
     persistCommits(repoUrl: string, commitInfo: Array<CommitInfo>): Promise<void>;
     readCommitsUpTo(repoUrl: string, date: string);
+    readCommitsBetween(repoUrl: string, startDate: string, endDate: string);
 }
 
 export default class GitCommitCache implements ICommitCache {
@@ -53,6 +54,16 @@ export default class GitCommitCache implements ICommitCache {
         }
     }
 
+    public async readCommitsBetween(repoUrl: string, startDate: string, endDate: string) {
+        const key = this.stripRepoName(repoUrl);
+        try {
+            const commitData: Array<CommitInfo> = await this.getCommitData(key);
+            return this.filterCommitsBetween(commitData, startDate, endDate);
+        } catch (err) {
+            throw err;
+        }
+    }
+
     private async getCommitData(key: string): Promise<Array<CommitInfo>> {
         if (this.commitCache.has(key)) {
             return this.commitCache.get(key);
@@ -71,6 +82,15 @@ export default class GitCommitCache implements ICommitCache {
             const commitDate: Date = new Date(commit.date);
             const lastDate: Date = new Date(endDate);
             return commitDate <= lastDate;
+        });
+    }
+
+    public filterCommitsBetween(commits: Array<CommitInfo>, startDate: string, endDate: string): Array<CommitInfo> {
+        return commits.filter((commit: CommitInfo) => {
+            const commitDate: Date = new Date(commit.date);
+            const minDate: Date = new Date(startDate);
+            const maxDate: Date = new Date(endDate);
+            return commitDate >= minDate && commitDate <= maxDate;
         });
     }
 

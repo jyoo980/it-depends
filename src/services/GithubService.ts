@@ -27,8 +27,11 @@ export default class GithubService {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
                 const now: string = new Date().toISOString();
-                const allCommitsToNow: Array<CommitInfo> = await this.listCommitsUpTo(repoUrl, now);
-                await this.cache.persistCommits(repoUrl, allCommitsToNow);
+                const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, now);
+                const rawCommits = await this.restClient.get(requestUrl);
+                const commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
+                const richCommits: Array<CommitInfo> = await this.hydrateCommits(repoUrl, commitSHAs);
+                await this.cache.persistCommits(repoUrl, richCommits);
             }
         } catch (err) {
             console.warn(err);
@@ -40,19 +43,25 @@ export default class GithubService {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
-                const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateString);
-                let rawCommits = await this.restClient.get(requestUrl);
-                let commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
-                return await this.hydrateCommits(repoUrl, commitSHAs);
-            } else {
-                return this.cache.readCommitsUpTo(repoUrl, dateString);
+                this.getAndSaveAllCommits(repoUrl);
             }
+            return await this.cache.readCommitsUpTo(repoUrl, dateString);
         } catch (err) {
             console.warn(err);
         }
     }
 
-    // TODO: make method for getting commits between a date.
+    public async listCommitsBetween(repoUrl: string, startDate: string, endDate: string): Promise<Array<CommitInfo>> {
+        try {
+            const historyExists: boolean = await this.cache.exists(repoUrl);
+            if (!historyExists) {
+                await this.getAndSaveAllCommits(repoUrl);
+            }
+            return await this.cache.readCommitsBetween(repoUrl, startDate, endDate);
+        } catch (err) {
+            console.warn(err);
+        }
+    }
 
     private async hydrateCommits(repoUrl: string, commitSHAs: Array<string>): Promise<Array<CommitInfo>> {
         const detailedCommitRequests = commitSHAs.map((sha) => {
