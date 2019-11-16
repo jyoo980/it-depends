@@ -37,7 +37,7 @@ export default class GithubService {
             }
             return await this.cache.getCommitData(repoUrl);
         } catch (err) {
-            console.warn(err);
+            console.warn(`GithubService::Error while getting commits from: ${repoUrl}`);
             throw { message: err.message } as GithubServiceError
         }
     }
@@ -63,7 +63,8 @@ export default class GithubService {
             }
             return await this.cache.readCommitsUpTo(repoUrl, dateString);
         } catch (err) {
-            console.warn(err);
+            console.warn(`GithubService::Error while listing commits from: ${repoUrl}`);
+            throw { message: err.message } as GithubServiceError;
         }
     }
 
@@ -75,7 +76,8 @@ export default class GithubService {
             }
             return await this.cache.readCommitsBetween(repoUrl, startDate, endDate);
         } catch (err) {
-            console.warn(err);
+            console.warn(`GithubService::Error while listing commits from: ${repoUrl}`);
+            throw { message: err.message } as GithubServiceError;
         }
     }
 
@@ -89,18 +91,19 @@ export default class GithubService {
             let rawCommitData: any[] = rawResponses.map((response) => response.body);
             return this.responseParser.buildCommitMap(rawCommitData);
         } catch (err) {
-            throw err;
+            console.warn(`GithubService::Error while hydrating commits from: ${repoUrl}`);
+            throw { message: err.message } as GithubServiceError;
         }
     }
 
     private async getNumCommits(repoUrl: string): Promise<number> {
-        const requestUrl = this.urlBuilder.buildListContributors(repoUrl);
+        const requestUrl = this.urlBuilder.buildListContributorsUrl(repoUrl);
         try {
             const response = await this.restClient.get(requestUrl);
             return this.responseParser.extractNumCommits(response.body);
         } catch (err) {
             console.warn(`GithubService::Error retrieving number of commits from: ${repoUrl}`);
-            throw err;
+            throw { message: err.message } as GithubServiceError;
         }
     }
 }
