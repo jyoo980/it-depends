@@ -1,6 +1,13 @@
 import {CommitInfo, FileInfo} from "../interfaces/GitHubTypes";
+import PatchParser from "./PatchParser";
 
 export default class ResponseParser {
+
+    private readonly patchParser: PatchParser;
+
+    constructor() {
+        this.patchParser = new PatchParser();
+    }
 
     public buildCommitMap(rawCommitData: Array<any>): Array<CommitInfo> {
         return rawCommitData.map((rawCommit) => {
@@ -30,6 +37,7 @@ export default class ResponseParser {
                 name: fileInfo["filename"],
                 additions: fileInfo["additions"],
                 deletions: fileInfo["deletions"],
+                diff: this.patchParser.extractPatchInfo(fileInfo["filename"], fileInfo["patch"]),
             } as FileInfo
         });
     }
