@@ -19,7 +19,6 @@ describe("GithubService tests", () => {
         } catch (err) {
             totalNumCommits = err;
         } finally {
-            // TODO: gets us back 160, off by one...
             expect(totalNumCommits.length).to.equal(159);
         }
     });
