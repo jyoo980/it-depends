@@ -11,3 +11,4 @@ test/**/*.spec.js.map
 test/*.map
 node_modules/
 data/
+package-lock.json
