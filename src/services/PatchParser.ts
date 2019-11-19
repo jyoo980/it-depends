@@ -20,12 +20,16 @@ export default class PatchParser {
     private populateChangedLineArrays(line: string, linesAdded: string[], linesDeleted: string[]) {
         if (this.isAddition(line)) {
             return linesAdded.push(line.replace(/[ +]/g, ''));
-        } else {
+        } else if (this.isDeletion(line)) {
             return linesDeleted.push(line.replace(/[ -]/g, ''));
         }
     }
 
     private isAddition(loc: string): boolean {
         return loc[0] === "+";
+    }
+
+    private isDeletion(loc: string): boolean {
+        return loc[0] === "-";
     }
 }

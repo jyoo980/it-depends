@@ -17,7 +17,7 @@ export default class GithubService {
 
     constructor(restClient: IRestClient, cache: ICommitCache) {
         this.restClient = restClient;
-        this.urlBuilder = new URLBuilder( "3fc9ac24e39a5705954fadf7c30633ae9193c007");
+        this.urlBuilder = new URLBuilder( "NOPE");
         this.responseParser = new ResponseParser();
         this.cache = cache;
     }
@@ -82,6 +82,17 @@ export default class GithubService {
             return await this.cache.readCommitsBetween(repoUrl, startDate, endDate);
         } catch (err) {
             console.warn(`GithubService::Error while listing commits from: ${repoUrl}`);
+            throw { message: err.message } as GithubServiceError;
+        }
+    }
+
+    public async getFileAtCommit(repoUrl: string, filePath: string, commitSHA: string): Promise<string> {
+        try {
+            const url: string = this.urlBuilder.buildGetFileUrl(repoUrl, filePath, commitSHA);
+            const response: IRestResponse = await this.restClient.get(url);
+            return this.responseParser.extractFileContents(response.body);
+        } catch (err) {
+            console.warn(`GithubService::Error while getting file contents from: ${repoUrl}`);
             throw { message: err.message } as GithubServiceError;
         }
     }

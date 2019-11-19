@@ -22,4 +22,20 @@ describe("GithubService tests", () => {
             expect(totalNumCommits.length).to.equal(159);
         }
     });
+
+    it("should read a file given a repo, filepath, and commitSHA", async () => {
+        const sampleRepo: string = "https://github.com/jyoo980/it-depends";
+        const sha: string = "79e8a654e8b6a99fdc15c36ea5064edbfb440e9c";
+        const path: string = "src/rest/RestClient.ts";
+        let file: string;
+        ghService = new GithubService(liveRestClient, liveCache);
+        try {
+            file = await ghService.getFileAtCommit(sampleRepo, path, sha);
+            console.log(file);
+        } catch (err) {
+            file = err;
+        } finally {
+            // TODO
+        }
+    });
 });
