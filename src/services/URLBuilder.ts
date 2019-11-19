@@ -67,6 +67,22 @@ export default class URLBuilder {
         return `${this.BASE_URL}/${owner}/${repo}/contributors`;
     }
 
+    /**
+     * Builds the request URL for
+     * GET /repos/:owner/:repo/contents/:path
+     *
+     * https://developer.github.com/v3/repos/contents/#get-contents
+     *
+     * @param repoUrl the url of the repo for which we want to build the url
+     * @param filePath the path of the file we want to read
+     * @param commitSHA the commit associated with the state of the file we want to read
+     */
+    public buildGetFileUrl(repoUrl: string, filePath: string, commitSHA: string): string {
+        const owner: string = this.getOwner(repoUrl);
+        const repo: string = this.getRepoName(repoUrl);
+        return `${this.BASE_URL}/${owner}/${repo}/contents/${filePath}?ref=${commitSHA}`;
+    }
+
     private getOwner(repoUrl: string): string {
         const lastSlashIndex: number = repoUrl.lastIndexOf("/");
         const ownerStartIndex: number = repoUrl.lastIndexOf(".com/") +5;

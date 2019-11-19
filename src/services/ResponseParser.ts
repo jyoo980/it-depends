@@ -47,4 +47,9 @@ export default class ResponseParser {
             return numCommits + contributorData["contributions"];
         }, 0);
     }
+
+    public extractFileContents(rawFileInfo: any): string {
+        let buffer = new Buffer(rawFileInfo["content"], 'base64');
+        return buffer.toString();
+    }
 }

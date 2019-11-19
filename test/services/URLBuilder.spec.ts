@@ -32,4 +32,11 @@ describe("URLBuilder tests", () => {
         const requestUrl: string = builder.buildListCommitsUrl(sampleRepoUrl, currentTime);
         expect(requestUrl).to.equal(`https://api.github.com/repos/jyoo980/TypeScript.ts/commits?until=${currentTime}&per_page=100&access_token=${fakeAccessToken}`);
     });
+
+    it("should correctly build a GET request URL for getting a file at a point of a repo", () => {
+        const sha: string = "79e8a654e8b6a99fdc15c36ea5064edbfb440e9c";
+        const path: string = "src/rest/RestClient.ts";
+        const requestUrl: string = builder.buildGetFileUrl("https://github.com/jyoo980/it-depends", path, sha);
+        expect(requestUrl).to.equal("https://api.github.com/repos/jyoo980/it-depends/contents/src/rest/RestClient.ts?ref=79e8a654e8b6a99fdc15c36ea5064edbfb440e9c");
+    });
 });
