@@ -97,6 +97,18 @@ export default class GithubService {
         }
     }
 
+    // TODO: change the return type
+    public async getRepo(repoUrl: string): Promise<void> {
+        try {
+            const url: string = this.urlBuilder.buildGetRepoUrl(repoUrl);
+            const response: IRestResponse = await this.restClient.get(url);
+            // TODO: parse the response with jszip
+        } catch (err) {
+            console.warn(`GithubService::Error while downloading repo: ${repoUrl}`);
+            throw { message: err.message } as GithubServiceError;
+        }
+    }
+
     private async hydrateCommits(repoUrl: string, commitSHAs: Array<string>): Promise<Array<CommitInfo>> {
         const detailedCommitRequests = commitSHAs.map((sha) => {
             const url = this.urlBuilder.buildGetSingleCommitUrl(repoUrl, sha);

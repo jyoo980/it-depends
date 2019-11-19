@@ -38,4 +38,14 @@ describe("GithubService tests", () => {
             // TODO
         }
     });
+
+    it("should obtain a repo as a .zip file", async () => {
+        const sampleRepo: string = "https://github.com/jyoo980/it-depends";
+        ghService = new GithubService(liveRestClient, liveCache);
+        try {
+            await ghService.getRepo(sampleRepo);
+        } catch (err) {
+            // TODO
+        }
+    });
 });

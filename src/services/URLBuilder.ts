@@ -83,6 +83,20 @@ export default class URLBuilder {
         return `${this.BASE_URL}/${owner}/${repo}/contents/${filePath}?ref=${commitSHA}`;
     }
 
+    /**
+     * Builds the request URL for getting a repo as a .zip file
+     * GET /repos/:owner/:repo/:archive_format/:ref
+     *
+     * https://developer.github.com/v3/repos/contents/#get-archive-link
+     *
+     * @param repoUrl the url of the repo for which we want to build the url
+     */
+    public buildGetRepoUrl(repoUrl: string): string {
+        const owner: string = this.getOwner(repoUrl);
+        const repo: string = this.getRepoName(repoUrl);
+        return `${this.BASE_URL}/${owner}/${repo}/zipball`;
+    }
+
     private getOwner(repoUrl: string): string {
         const lastSlashIndex: number = repoUrl.lastIndexOf("/");
         const ownerStartIndex: number = repoUrl.lastIndexOf(".com/") +5;
