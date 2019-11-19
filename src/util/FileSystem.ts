@@ -1,4 +1,5 @@
 import * as fs from "fs-extra";
+import * as JSZip from "JSZip";
 
 export interface FileSystemError extends Error {
     message: string,
@@ -36,5 +37,20 @@ export default class FileSystem {
             console.log(`FileSystem::${fullPath} appears to not exist`);
             return false;
         }
+    }
+
+    public async writeAsZip(dir: string, repoName: string, contentAsBuf: any): Promise<string> {
+        const fullPath: string = `${dir}/${repoName}.zip`;
+        return new Promise((resolve, reject) => {
+            JSZip.loadAsync(contentAsBuf)
+                .then((zip) => {
+                    zip.generateNodeStream({ streamFiles:true })
+                        .pipe(fs.createWriteStream(fullPath))
+                        .on('finish', () => resolve(fullPath))
+                })
+                .catch((err: any) => {
+                    reject(err);
+                })
+        });
     }
 }

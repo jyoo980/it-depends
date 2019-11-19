@@ -97,12 +97,12 @@ export default class GithubService {
         }
     }
 
-    // TODO: change the return type
-    public async getRepo(repoUrl: string): Promise<void> {
+    public async getAndSaveRepo(repoUrl: string): Promise<string> {
         try {
             const url: string = this.urlBuilder.buildGetRepoUrl(repoUrl);
-            const response: IRestResponse = await this.restClient.get(url);
-            // TODO: parse the response with jszip
+            const response: IRestResponse = await this.restClient.getAsBuffer(url);
+            const repoName: string = this.urlBuilder.getRepoName(repoUrl);
+            return await this.cache.writeRepoToDisk("./data", repoName, response.body);
         } catch (err) {
             console.warn(`GithubService::Error while downloading repo: ${repoUrl}`);
             throw { message: err.message } as GithubServiceError;

@@ -103,7 +103,7 @@ export default class URLBuilder {
         return repoUrl.substring(ownerStartIndex, lastSlashIndex);
     }
 
-    private getRepoName(repoUrl: string): string {
+    public getRepoName(repoUrl: string): string {
         const lastSlashIndex: number = repoUrl.lastIndexOf("/");
         return repoUrl.substring(lastSlashIndex + 1);
     }
