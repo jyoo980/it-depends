@@ -91,10 +91,14 @@ export default class URLBuilder {
      *
      * @param repoUrl the url of the repo for which we want to build the url
      */
-    public buildGetRepoUrl(repoUrl: string): string {
+    public buildGetRepoUrl(repoUrl: string, commitSha?: string): string {
         const owner: string = this.getOwner(repoUrl);
         const repo: string = this.getRepoName(repoUrl);
-        return `${this.BASE_URL}/${owner}/${repo}/zipball`;
+        let baseUrl: string = `${this.BASE_URL}/${owner}/${repo}/zipball`;
+        if (commitSha !== undefined) {
+            baseUrl = `${baseUrl}?ref=${commitSha}`;
+        }
+        return baseUrl;
     }
 
     private getOwner(repoUrl: string): string {
