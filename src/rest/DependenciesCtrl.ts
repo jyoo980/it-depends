@@ -3,9 +3,15 @@ import {DependencyTypes} from "../model/DependencyMatrix";
 import FileDependencyGraphBuilder from "../services/FileDependencyGraphBuilder";
 import URLBuilder from "../services/URLBuilder";
 import AccessTokenManager from "../util/AccessTokenManager";
+import GithubService from "../services/GithubService";
+import RestClient from "./RestClient";
+import GitCommitCache from "../services/GitCommitCache";
+import CrossCutAnalyzer from "../services/CrossCutAnalyzer";
 
 export default class DependenciesCtrl {
     private server: restify.Server;
+    private ghService: GithubService;
+    private ccAnalyzer: CrossCutAnalyzer;
 
     /**
      * Initializes the dependencies server object
@@ -15,6 +21,8 @@ export default class DependenciesCtrl {
             name: 'It-depends',
             version: '1.0.0'
         });
+        this.ghService = new GithubService(new RestClient(), new GitCommitCache());
+        this.ccAnalyzer = new CrossCutAnalyzer();
     }
 
     /**
@@ -34,12 +42,14 @@ export default class DependenciesCtrl {
 
         // TODO: add endpoints for getting other data (e.g. initializing the visualization and getting commit info,
         // maybe another endpoint for 'flushing' data, if someone refreshes/ changes the git URL)
+        this.server.put('/init', this.initURL);
 
         // TODO: add endpoints for getting real data
         // format: /:graph-type/:level?start=<startSHA>&end=<endSHA>&url=<repoURL>
         this.server.get('/dependency/file', this.getFileDependencyGraphData);
         this.server.get('/dependency/class', this.getClassDependencyGraphData);
         this.server.get('/dependency/method', this.getMethodDependencyGraphData);
+        this.server.get('/crosscut/file', this.getFileCrossCutGraphData);
 
         // Temporary URL; can change the format once we have a better idea of what request URL should look like/
         // how we cache data, if that's something we will do.
@@ -102,8 +112,25 @@ export default class DependenciesCtrl {
         return next();
     }
 
+    private async getFileCrossCutGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let commits;
+        try {
+            commits = await this.ghService.listCommitsBetween(req.query.url, req.query.start, req.query.end); // TODO await?
+            res.send(this.ccAnalyzer.getFileCrossCut(commits));
+        } catch (err) {
+            res.status(500);
+            console.log(err);
+            res.send(err.message);
+        }
 
+        return next();
+    }
 
+    private async initURL(req: restify.Request, res: restify.Response, next: restify.Next) {
+        const commits = await this.ghService.getAndSaveAllCommits(req.query.url);
+        res.send({commits: commits});
+        return next();
+    }
 
     private getCrossCutFileSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
         // TODO: create more sample datasets to retrieve via sample URL.
