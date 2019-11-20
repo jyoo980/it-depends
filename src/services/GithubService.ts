@@ -97,6 +97,12 @@ export default class GithubService {
         }
     }
 
+    /**
+     *
+     * @param repoUrl the url of the repo we want to obtain
+     *
+     * Returns the path to the repo as a zip file we've saved onto disk.
+     */
     public async getAndSaveRepo(repoUrl: string): Promise<string> {
         try {
             const url: string = this.urlBuilder.buildGetRepoUrl(repoUrl);
