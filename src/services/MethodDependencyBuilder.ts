@@ -37,9 +37,6 @@ export default class MethodDependencyBuilder {
         let headMethods = await this.getAllMethodsAtCommitShaOfRepo(repoUrl, repoName, HEAD);
         let headMethodsMap = this.buildMethodMap(headMethods);
 
-        //commitMethodMap[HEAD] = this.buildMethodMap(commitMethodMap[HEAD]);
-        //allCommits.shift(); // remove HEAD
-
         // Get rest of the commits' methods and whether they were changed in this method
         for (let commit of allCommits) {
             let commitMethods = await this.getAllMethodsAtCommitShaOfRepo(repoUrl, repoName, commit.sha);
