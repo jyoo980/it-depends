@@ -17,7 +17,7 @@ export default class GithubService {
 
     constructor(restClient: IRestClient, cache: ICommitCache) {
         this.restClient = restClient;
-        this.urlBuilder = new URLBuilder( "NOPE");
+        this.urlBuilder = new URLBuilder( "");
         this.responseParser = new ResponseParser();
         this.cache = cache;
     }
