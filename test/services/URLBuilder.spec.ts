@@ -1,10 +1,11 @@
 import { expect } from "chai";
 import URLBuilder from "../../src/services/URLBuilder";
+import AccessTokenManager from "../../src/util/AccessTokenManager";
 
 describe("URLBuilder tests", () => {
 
     const sampleRepoUrl: string = "https://github.com/jyoo980/TypeScript.ts";
-    const fakeAccessToken: string = "hahathisisafakeaccesstoken";
+    const fakeAccessToken: string = AccessTokenManager.getGithubAccessToken();
     let builder: URLBuilder;
 
     before(() => {
