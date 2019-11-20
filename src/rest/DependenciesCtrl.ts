@@ -1,15 +1,5 @@
 import restify = require('restify');
-
-export enum DependencyTypes {
-    Association = "association",
-    Inheritance = "inheritance",
-    Implementation = "implementation",
-    Dependency = "dependency",
-    Aggregation = "aggregation",
-    Composition = "composition",
-    References = "references",
-    Calls = "calls"
-}
+import {DependencyTypes} from "../model/DependencyMatrix";
 
 export default class DependenciesCtrl {
     private server: restify.Server;

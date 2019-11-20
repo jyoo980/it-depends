@@ -1,24 +1,24 @@
-import FileSystem from "../util/FileSystem";
-import {DependencyTypes} from "../rest/DependenciesCtrl";
+import AbstractDependencyGraphBuilder from "./AbstractDependencyGraphBuilder";
+import {DependencyMatrix, DependencyTypes} from "../model/DependencyMatrix";
 
-export default class FileDependencyGraphBuilder {
-    private fileSystem: FileSystem;
+export default class FileDependencyGraphBuilder extends AbstractDependencyGraphBuilder {
 
-    constructor() {
-        this.fileSystem = new FileSystem();
-    }
-    // get file
-
-    public async getDependenciesFromProject(directory: string, repoName: string): Promise<any> {
-        let contents = await this.fileSystem.readRepoFromDisk(directory, repoName);
+    /**
+     * Gets all mentions of other files inside files of a project
+     *
+     * @param directory     directory to store repository contents
+     * @param repoName      url of repository to pull down
+     * @returns any
+     *
+     */
+    public async getDependenciesFromProject(directory: string, repoUrl: string): Promise<DependencyMatrix> {
+        let contents = await this.fileSystem.readRepoFromDisk(directory, repoUrl);
         let fileNames = Object.keys(contents).map(name => name.replace(/.java+$/, ""));
-        console.log("length: " + fileNames.length);
-        let dependencyData = new Array(fileNames.length).fill(new Array(fileNames.length).fill(new Array()));
+        let dependencyData = this.initializeEmptyMatrix(fileNames.length);
 
-        let dependencyMatrix = {
-            names: fileNames,
-            data: dependencyData
-        };
+        let dependencyMatrix = new DependencyMatrix();
+        dependencyMatrix.names = fileNames;
+
         for(let file in contents) {
             let fileName = file.replace(/.java+$/, "");
             let dependenciesToSearch = fileNames.filter((name) => {
@@ -28,41 +28,20 @@ export default class FileDependencyGraphBuilder {
 
             dependenciesInFile.forEach((dep) => {
                 let from = fileNames.indexOf(fileName);
-                let to = fileNames.indexOf((dep));
-                console.log("from");
-                console.log(fileName);
-                console.log("to");
-                console.log(dep);
-                console.log(fileNames.indexOf((dep)));
-                // console.log(fileName);
-                // console.log(dependencyMatrix.data[fileNames.indexOf(fileName)][fileNames.indexOf((dep))]);
-                dependencyData[from][to] = [DependencyTypes.References];
+                let to = fileNames.indexOf(dep);
+                dependencyData[from][to].push(DependencyTypes.References);
             });
-
-            // [       0    1   2                       3   4
-            //     0 [[], [], [DependencyTypes.Calls], [], []],
-            //     1 [[], [], [DependencyTypes.Calls], [], []],
-            //     2 [[], [], [], [], [DependencyTypes.References]],
-            //     3 [[DependencyTypes.References], [], [], [], []],
-            //     4 [[], [], [], [], []],
-            // ]
         }
-
-        // console.log(dependencyMatrix.names);
-        console.log(dependencyData[0].length);
-        console.log(dependencyData[0]);
-        // console.log(fileNames);
-        // console.log(contents);
-
+        dependencyMatrix.data = dependencyData;
         return dependencyMatrix;
     }
 
     /**
      * Gets all of the mentions of other files in a file's contents.
      *
-     * @param fileContents
-     * @param self
-     * @param fileNames
+     * @param fileContents  a string representing the file's contents
+     * @param fileNames     a list of all file names inside the directory, excluding the file which is being parsed here
+     * @returns string[]    list of dependencies in file.
      *
      */
     public getDependenciesFromFile(fileContents: string, fileNames: string[]) {
@@ -87,16 +66,15 @@ export default class FileDependencyGraphBuilder {
                     return;
                 }
 
+                // TODO: possibly clean this up
                 let spaceRegex = RegExp("( " + name + "|" + name + " )");
                 let brackRegex = RegExp("(\\(" + name + " )");
-                let collRegex = RegExp("<"+name+">");
+                let collRegex = RegExp("<" + name + "|" + name + ">");
                 if(spaceRegex.test(line) || brackRegex.test(line) || collRegex.test(line)) {
                     dependencies.push(name);
                 }
             });
         });
-
         return dependencies;
-
     }
 }
