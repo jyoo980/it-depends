@@ -4,10 +4,12 @@ export class Method {
     startLine: number;
     endLine: number;
     returnType: string;
-    commitsChangedIn: string[];
+    file: string; // which file this method is in
+    commitsChangedIn: string[]; // previous commits this method was changed in
 
-    constructor(name, startLine, endLine, returnType) {
+    constructor(name, file, startLine, endLine, returnType) {
         this.name = name;
+        this.file = file;
         this.startLine = startLine;
         this.endLine = endLine;
         this.returnType = returnType;
@@ -16,5 +18,9 @@ export class Method {
 
     addCommitChangedIn(commitSha: string) {
         this.commitsChangedIn.push(commitSha);
+    }
+
+    getIdentifier(): string {
+        return `${this.file}/${this.name}`;
     }
 }
