@@ -97,6 +97,27 @@ export default class GithubService {
         }
     }
 
+    /**
+     *
+     * @param repoUrl the url of the repo we want to obtain
+     *
+     * Returns the path to the repo as a zip file we've saved onto disk. Will have to read the contents with
+     * JSZip.loadAsync(): https://stuk.github.io/jszip/documentation/api_jszip/load_async.html. A good workflow:
+     *   1. Use the returned path to read from disk using the FileSystem class
+     *   2. Decode the zip file using the loadAsync() method
+     */
+    public async getAndSaveRepo(repoUrl: string): Promise<string> {
+        try {
+            const url: string = this.urlBuilder.buildGetRepoUrl(repoUrl);
+            const response: IRestResponse = await this.restClient.getAsBuffer(url);
+            const repoName: string = this.urlBuilder.getRepoName(repoUrl);
+            return await this.cache.writeRepoToDisk("./data", repoName, response.body);
+        } catch (err) {
+            console.warn(`GithubService::Error while downloading repo: ${repoUrl}`);
+            throw { message: err.message } as GithubServiceError;
+        }
+    }
+
     private async hydrateCommits(repoUrl: string, commitSHAs: Array<string>): Promise<Array<CommitInfo>> {
         const detailedCommitRequests = commitSHAs.map((sha) => {
             const url = this.urlBuilder.buildGetSingleCommitUrl(repoUrl, sha);

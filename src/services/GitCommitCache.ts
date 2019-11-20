@@ -7,6 +7,7 @@ export interface ICommitCache {
     persistCommits(repoUrl: string, commitInfo: Array<CommitInfo>): Promise<void>;
     readCommitsUpTo(repoUrl: string, date: string);
     readCommitsBetween(repoUrl: string, startDate: string, endDate: string);
+    writeRepoToDisk(dir: string, repoName: string, content: any): Promise<string>
 }
 
 export default class GitCommitCache implements ICommitCache {
@@ -73,6 +74,10 @@ export default class GitCommitCache implements ICommitCache {
             const maxDate: Date = new Date(endDate);
             return commitDate >= minDate && commitDate <= maxDate;
         });
+    }
+
+    public async writeRepoToDisk(dir: string, repoName: string, content: any): Promise<string> {
+        return await this.fileSystem.writeAsZip(dir, repoName, content);
     }
 
     private stripRepoName(repoUrl: string): string {
