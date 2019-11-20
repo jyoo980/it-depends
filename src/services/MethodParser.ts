@@ -1,29 +1,27 @@
-import * as fs from "fs-extra";
 import {Method} from "../interfaces/Method";
-import {JavaFileSystem} from "../util/JavaFileSystem";
-const path = require("path");
+import FileSystem from "../util/FileSystem";
 
 export default class MethodParser {
 
-    private readonly javaFileSystem: JavaFileSystem;
+    private readonly fileSystem: FileSystem;
 
     constructor() {
-        this.javaFileSystem = new JavaFileSystem();
+        this.fileSystem = new FileSystem();
     }
 
     /**
-     * Returns all the Java Methods in the given path to project
+     * Returns all the Java Methods in the given directory and repo name
      *
-     * @param projectPath the path to the project to check
+     * @param dir the directory to the repo file
+     * @param repoName the name of the repository
      */
-    public getMethodsFromProject(projectPath): Method[] {
-        let dirFiles = this.javaFileSystem.getJavaFilesRecursively(path.resolve(__dirname, projectPath));
-
+    public async getMethodsFromProject(dir, repoName): Promise<Method[]> {
+        let repoObject;
         let allMethods: Method[] = [];
 
-        for (let file of dirFiles) {
-            let methods = this.getMethodsFromJavaFile(file);
-            allMethods = allMethods.concat(methods);
+        repoObject = await this.fileSystem.readRepoFromDisk(dir, repoName);
+        for (let fileName in repoObject) {
+            allMethods = allMethods.concat(this.getMethodsFromJavaFile(repoObject[fileName]));
         }
 
         return allMethods;
@@ -32,21 +30,21 @@ export default class MethodParser {
     /**
      * Returns all the Java Methods in the given Java file
      *
-     * @param javaPath the path to the Java file to check
+     * @param javaFileString the Java file, in string form
      */
-    public getMethodsFromJavaFile(javaPath): Method[] {
-        let javaFileString = fs.readFileSync(javaPath).toString().split("\r\n");
+    public getMethodsFromJavaFile(javaFileString): Method[] {
+        let javaFileStringArr = javaFileString.split("\n");
 
-        let regexp = RegExp("^(\\t|    )(public|private)( )(static )?([\\w\\d<>]* )[\\w\\d_.-]+((\\((( )*[\\w\\d\\[\\]_.-]+ [\\w\\d_.-]+,?)*\\))) {$");
+        let regexp = RegExp("^(\\t|    )(public|private)( )(static )?([\\w\\d<>]* )+[\\w\\d_.-]+((\\((( )*[\\w\\d\\[\\]<>,_.-]+ [\\w\\d_.-]+,?)*\\))) {$");
         let endMethodRegexp = RegExp("^(\\t|    )}$");
 
         let methods: Method[] = [];
 
         let lineNumber = 1;
-        for (let line of javaFileString) {
+        for (let line of javaFileStringArr) {
             // Found a method!
             if (regexp.test(line)) {
-                methods.push(this.parseMethodSignature(line, javaPath, lineNumber));
+                methods.push(this.parseMethodSignature(line, lineNumber));
             }
 
             // Found the end of the latest method found, update its endLine
@@ -64,10 +62,9 @@ export default class MethodParser {
      * Parses the given Java method signature and returns a Method
      *
      * @param methodSignature the method signature to parse
-     * @param filePath the path to the file this method belongs to
      * @param startLine the line number this method begins in
      */
-    public parseMethodSignature(methodSignature: string, filePath: string, startLine: number): Method {
+    public parseMethodSignature(methodSignature: string, startLine: number): Method {
         let tokens = methodSignature.split(" ");
         let index = 0;
         let tabLevel: number = 0;
@@ -110,6 +107,6 @@ export default class MethodParser {
             index++
         }
 
-        return new Method(methodName, filePath, startLine, 0, returnType);
+        return new Method(methodName, startLine, 0, returnType);
     }
 }
