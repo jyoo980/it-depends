@@ -49,7 +49,8 @@ export default class FileSystem {
             const fileNames: string[] = repoFiles.map((file) => this.getFileName(file.name));
             const filesToText: Array<Promise<string>> = repoFiles.map((file) => file.async("text"));
             const filesAsText = await Promise.all(filesToText);
-            const fileNamesToContent: { [key: string]: string } = dash.zipObject(fileNames, filesAsText);
+            const unixFilesAsText = this.convertToUnixLineEndings(filesAsText);
+            const fileNamesToContent: { [key: string]: string } = dash.zipObject(fileNames, unixFilesAsText);
             const dataToSave = JSON.stringify(fileNamesToContent);
             await fs.writeFile(fullPath, dataToSave);
             return fullPath;
@@ -57,6 +58,10 @@ export default class FileSystem {
             console.log(`FileSystem::failed to write repo: ${repoName} to disk`);
             throw err;
         }
+    }
+
+    private convertToUnixLineEndings(contents: string[]): string[] {
+        return contents.map((fileAsText) => fileAsText.replace(/\r/g, ""));
     }
 
     public async readRepoFromDisk(dir: string, repoName: string): Promise<any> {
