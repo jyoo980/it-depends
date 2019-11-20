@@ -1,5 +1,6 @@
 import * as fs from "fs-extra";
 import * as JSZip from "JSZip";
+import * as dash from "lodash";
 
 export interface FileSystemError extends Error {
     message: string,
@@ -39,18 +40,42 @@ export default class FileSystem {
         }
     }
 
-    public async writeAsZip(dir: string, repoName: string, contentAsBuf: any): Promise<string> {
-        const fullPath: string = `${dir}/${repoName}.zip`;
-        return new Promise((resolve, reject) => {
-            JSZip.loadAsync(contentAsBuf)
-                .then((zip) => {
-                    zip.generateNodeStream({ streamFiles:true })
-                        .pipe(fs.createWriteStream(fullPath))
-                        .on('finish', () => resolve(fullPath))
-                })
-                .catch((err: any) => {
-                    reject(err);
-                })
-        });
+    public async writeRepoToDisk(dir: string, repoName: string, contentAsBuf: any): Promise<string> {
+        const fullPath: string = `${dir}/${repoName}-PARSED.txt`;
+        try {
+            const repoAsZip = await JSZip.loadAsync(contentAsBuf);
+            const repoContents = repoAsZip.files;
+            const repoFiles = Object.values(repoContents).filter((content) => this.isJavaFile(content));
+            const fileNames: string[] = repoFiles.map((file) => this.getFileName(file.name));
+            const filesToText: Array<Promise<string>> = repoFiles.map((file) => file.async("text"));
+            const filesAsText = await Promise.all(filesToText);
+            const fileNamesToContent: { [key: string]: string } = dash.zipObject(fileNames, filesAsText);
+            const dataToSave = JSON.stringify(fileNamesToContent);
+            await fs.writeFile(fullPath, dataToSave);
+            return fullPath;
+        } catch (err) {
+            console.log(`FileSystem::failed to write repo: ${repoName} to disk`);
+            throw err;
+        }
+    }
+
+    public async readRepoFromDisk(dir: string, repoName: string): Promise<any> {
+        const fullPath: string = `${dir}/${repoName}-PARSED.txt`;
+        try {
+            const dataAsString = await fs.readFile(fullPath, "utf-8");
+            return JSON.parse(dataAsString);
+        } catch (err) {
+            console.log(`FileSystem::failed to read repo: ${repoName} from disk`);
+            throw err;
+        }
+    }
+
+    private isJavaFile(content: any): boolean {
+        return !content.dir && content.name.includes(".java");
+    }
+
+    private getFileName(fullPath: string): string {
+        const lastSlashIndex: number = fullPath.lastIndexOf("/");
+        return fullPath.substring(lastSlashIndex + 1);
     }
 }
