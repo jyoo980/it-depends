@@ -17,12 +17,15 @@
     "@types/fs-extra": "^8.0.1",
     "@types/jszip": "^3.1.6",
     "@types/mocha": "^5.2.7",
+    "@types/restify": "^8.4.1",
     "@types/typescript": "^2.0.0",
     "axios": "^0.19.0",
     "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "fs-extra": "^8.1.0",
     "jszip": "^3.2.2",
     "mocha": "^6.2.2",
+    "restify": "^8.4.0",
     "ts-node": "^8.5.0",
     "typescript": "^3.7.2"
   }
