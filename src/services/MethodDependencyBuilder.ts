@@ -4,6 +4,7 @@ import {Method} from "../interfaces/Method";
 import GitCommitCache from "./GitCommitCache";
 import RestClient from "../rest/RestClient";
 import {CommitInfo, FileInfo} from "../interfaces/GitHubTypes";
+import * as fs from "fs-extra";
 
 /**
  * A class to build cross-cut dependencies (across previous commits) between methods of HEAD.
@@ -124,8 +125,13 @@ export default class MethodDependencyBuilder {
     private async getAllMethodsAtCommitShaOfRepo(repoUrl: string, repoName: string, commitSha?: string) {
         let methods: Method[];
 
-        await this.ghService.getAndSaveRepo(repoUrl, commitSha);
-        methods = await this.methodParser.getMethodsFromProject("./data/", repoName, commitSha);
+        try {
+            await this.ghService.getAndSaveRepo(repoUrl, commitSha);
+            methods = await this.methodParser.getMethodsFromProject("./data/", repoName, commitSha);
+        } catch (err) {
+            console.log(`MethodDependencyBuilder::failed to get methods from repo: ${repoName}`);
+            throw err;
+        }
 
         return methods;
     }
