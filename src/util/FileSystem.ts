@@ -84,6 +84,11 @@ export default class FileSystem {
         return !content.dir && content.name.includes(".java");
     }
 
+    // private getFileName(fullPath: string): string {
+    //     const lastSlashIndex: number = fullPath.lastIndexOf("/");
+    //     return fullPath.substring(lastSlashIndex + 1);
+    // }
+
     private getFileName(fullPath: string): string {
         const firstSlashIndex: number = fullPath.indexOf("/");
         return fullPath.substring(firstSlashIndex + 1);
