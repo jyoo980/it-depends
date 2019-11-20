@@ -1,6 +1,9 @@
 import {Method} from "../interfaces/Method";
 import FileSystem from "../util/FileSystem";
 
+/**
+ * A class to extract all the methods from a given repository and commit sha.
+ */
 export default class MethodParser {
 
     private readonly fileSystem: FileSystem;

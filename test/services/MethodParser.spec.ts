@@ -5,8 +5,8 @@ import GitCommitCache from "../../src/services/GitCommitCache";
 import RestClient from "../../src/rest/RestClient";
 import {Method} from "../../src/interfaces/Method";
 
-describe("MethodParser tests", () => {
-
+describe("MethodParser tests", function () {
+    this.timeout(10000);
     let methodParser: MethodParser = new MethodParser();
     let liveRestClient: RestClient = new RestClient();
     let liveCache: GitCommitCache = new GitCommitCache();
