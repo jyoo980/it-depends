@@ -9,6 +9,7 @@ import * as fs from "fs-extra";
 /**
  * A class to build cross-cut dependencies (across previous commits) between methods of HEAD.
  */
+
 export default class MethodDependencyBuilder {
     methodParser: MethodParser;
     ghService: GithubService;
@@ -21,6 +22,7 @@ export default class MethodDependencyBuilder {
         this.liveCache = new GitCommitCache();
         this.ghService = new GithubService(this.liveRestClient, this.liveCache);
     }
+
 
     /**
      * Return cross-cut dependencies between methods of HEAD at the given repoUrl
@@ -132,7 +134,5 @@ export default class MethodDependencyBuilder {
             console.log(`MethodDependencyBuilder::failed to get methods from repo: ${repoName}`);
             throw err;
         }
-
-        return methods;
     }
 }

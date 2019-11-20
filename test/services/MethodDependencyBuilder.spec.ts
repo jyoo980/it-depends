@@ -24,5 +24,13 @@ describe("MethodDependencyBuilder tests", function () {
         expect(headMethodsMap[getNameFromPointerMethod].commitsChangedIn.length).to.equal(2);
         expect(headMethodsMap[getNameFromPointerMethod].commitsChangedIn).to.contain("3e6288124cce43a861603c331c9419531595f707");
         expect(headMethodsMap[getNameFromPointerMethod].commitsChangedIn).to.contain("a7b4613e663d8d17d3146f345aede907255ee251");
+
+describe("MethodParser tests", () => {
+
+    let mdb: MethodDependencyBuilder = new MethodDependencyBuilder();
+
+    it("should obtain the java-practice repo file and get all the methods from that repo file", async () => {
+        const sampleRepo: string = "https://github.com/jyoo980/java-practice";
+        await mdb.execute(sampleRepo);
     });
 });
