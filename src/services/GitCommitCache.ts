@@ -77,7 +77,7 @@ export default class GitCommitCache implements ICommitCache {
     }
 
     public async writeRepoToDisk(dir: string, repoName: string, content: any): Promise<string> {
-        return await this.fileSystem.writeAsZip(dir, repoName, content);
+        return await this.fileSystem.writeRepoToDisk(dir, repoName, content);
     }
 
     private stripRepoName(repoUrl: string): string {

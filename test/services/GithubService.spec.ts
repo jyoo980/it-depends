@@ -40,7 +40,7 @@ describe("GithubService tests", () => {
     });
 
     it("should obtain a repo as a .zip file", async () => {
-        const sampleRepo: string = "https://github.com/jyoo980/it-depends";
+        const sampleRepo: string = "https://github.com/jyoo980/java-practice";
         ghService = new GithubService(liveRestClient, liveCache);
         let response: string;
         try {
@@ -48,7 +48,7 @@ describe("GithubService tests", () => {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.equal("./data/it-depends.zip");
+            expect(response).to.equal("./data/java-practice-PARSED.txt");
         }
     });
 });
