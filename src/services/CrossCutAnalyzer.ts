@@ -40,8 +40,8 @@ export default class CrossCutAnalyzer {
         // now convert to percentages
         // row is from, col is to
         for (let i = 0; i < size; i++) {
-            let sum = data[i].reduce((sum, val) => sum + val, 0);
-            data[i].map(x => (x / sum).toPrecision(4));
+            let sum = data[i][i]; // all commits this file is in
+            data[i] = data[i].map(x => parseFloat((x / sum).toPrecision(4)));
         }
         return {headings: headings, size: size, type: type, data: data};
     }
