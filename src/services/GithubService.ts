@@ -61,26 +61,26 @@ export default class GithubService {
         return await this.hydrateCommits(repoUrl, commitSHAs);
     }
 
-    public async listCommitsUpTo(repoUrl: string, dateString: string): Promise<Array<CommitInfo>> {
+    public async listCommitsUpTo(repoUrl: string, upTo: number): Promise<Array<CommitInfo>> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
                 await this.getAndSaveAllCommits(repoUrl);
             }
-            return await this.cache.readCommitsUpTo(repoUrl, dateString);
+            return await this.cache.readCommitsUpTo(repoUrl, upTo);
         } catch (err) {
             console.warn(`GithubService::Error while listing commits from: ${repoUrl}`);
             throw { message: err.message } as GithubServiceError;
         }
     }
 
-    public async listCommitsBetween(repoUrl: string, startDate: string, endDate: string): Promise<Array<CommitInfo>> {
+    public async listCommitsBetween(repoUrl: string, startIndex: number, endIndex: number): Promise<Array<CommitInfo>> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
                 await this.getAndSaveAllCommits(repoUrl);
             }
-            return await this.cache.readCommitsBetween(repoUrl, startDate, endDate);
+            return await this.cache.readCommitsBetween(repoUrl, startIndex, endIndex);
         } catch (err) {
             console.warn(`GithubService::Error while listing commits from: ${repoUrl}`);
             throw { message: err.message } as GithubServiceError;
