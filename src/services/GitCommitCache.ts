@@ -5,8 +5,8 @@ export interface ICommitCache {
     exists(repoUrl: string): Promise<boolean>;
     getCommitData(repoUrl: string);
     persistCommits(repoUrl: string, commitInfo: Array<CommitInfo>): Promise<void>;
-    readCommitsUpTo(repoUrl: string, date: string);
-    readCommitsBetween(repoUrl: string, startDate: string, endDate: string);
+    readCommitsUpTo(repoUrl: string, upTo: number);
+    readCommitsBetween(repoUrl: string, startIndex: number, endIndex: number);
     writeRepoToDisk(dir: string, repoName: string, content: any): Promise<string>
 }
 
@@ -40,14 +40,14 @@ export default class GitCommitCache implements ICommitCache {
         await this.fileSystem.write("./data", `${key}.txt`, commitsToWrite);
     }
 
-    public async readCommitsUpTo(repoUrl: string, date: string) {
+    public async readCommitsUpTo(repoUrl: string, upTo: number) {
         const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
-        return this.filterCommitsBefore(commitData, date);
+        return this.filterCommitsBefore(commitData, upTo);
     }
 
-    public async readCommitsBetween(repoUrl: string, startDate: string, endDate: string) {
+    public async readCommitsBetween(repoUrl: string, startIndex: number, endIndex: number) {
         const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
-        return this.filterCommitsBetween(commitData, startDate, endDate);
+        return this.filterCommitsBetween(commitData, startIndex, endIndex);
     }
 
     public async getCommitData(repoUrl: string): Promise<Array<CommitInfo>> {
@@ -59,21 +59,12 @@ export default class GitCommitCache implements ICommitCache {
         return JSON.parse(rawData) as Array<CommitInfo>;
     }
 
-    public filterCommitsBefore(commits: Array<CommitInfo>, endDate: string): Array<CommitInfo> {
-        return commits.filter((commit: CommitInfo) => {
-            const commitDate: Date = new Date(commit.date);
-            const lastDate: Date = new Date(endDate);
-            return commitDate <= lastDate;
-        });
+    public filterCommitsBefore(commits: Array<CommitInfo>, upTo: number): Array<CommitInfo> {
+        return commits.slice(0, upTo);
     }
 
-    public filterCommitsBetween(commits: Array<CommitInfo>, startDate: string, endDate: string): Array<CommitInfo> {
-        return commits.filter((commit: CommitInfo) => {
-            const commitDate: Date = new Date(commit.date);
-            const minDate: Date = new Date(startDate);
-            const maxDate: Date = new Date(endDate);
-            return commitDate >= minDate && commitDate <= maxDate;
-        });
+    public filterCommitsBetween(commits: Array<CommitInfo>, startIndex: number, endIndex: number): Array<CommitInfo> {
+        return commits.slice(startIndex, endIndex);
     }
 
     public async writeRepoToDisk(dir: string, repoName: string, content: any): Promise<string> {
