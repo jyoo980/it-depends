@@ -29,9 +29,9 @@ describe("FileDependencyGraphBuilder tests", () => {
                 } catch (err) {
                     throw err;
                 } finally {
-                    expect(fileDep.names.length).to.equal(50);
+                    expect(fileDep.names.length).to.equal(62);
                     expect(fileDep.names[0]).to.equal("Account");
-                    expect(fileDep.data.length).to.equal(50);
+                    expect(fileDep.data.length).to.equal(62);
                     expect(fileDep.data[0][0]).to.be.empty;
                     expect(fileDep.data[0][1].length).to.equal(1);
                     expect(fileDep.data[0][1]).to.contain(DependencyTypes.References);

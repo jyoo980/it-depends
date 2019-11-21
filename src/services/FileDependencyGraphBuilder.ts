@@ -13,14 +13,22 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
      */
     public async getDependenciesFromProject(directory: string, repoUrl: string): Promise<DependencyMatrix> {
         let contents = await this.fileSystem.readRepoFromDisk(directory, repoUrl);
-        let fileNames = Object.keys(contents).map(name => name.replace(/.java+$/, ""));
+        let fileNames = Object.keys(contents).map((name) => {
+            let lastIndexSlash = name.lastIndexOf("/");
+            name = name.substring(lastIndexSlash + 1);
+            return name.replace(/.java+$/, "")
+        });
         let dependencyData = this.initializeEmptyMatrix(fileNames.length);
 
         let dependencyMatrix = new DependencyMatrix();
         dependencyMatrix.names = fileNames;
 
+        console.log(fileNames);
+
         for(let file in contents) {
-            let fileName = file.replace(/.java+$/, "");
+            let lastIndexSlash = file.lastIndexOf("/");
+            let fileName = file.substring(lastIndexSlash + 1);
+            fileName = fileName.replace(/.java+$/, "");
             let dependenciesToSearch = fileNames.filter((name) => {
                 return name !== fileName;
             });
