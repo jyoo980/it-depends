@@ -60,4 +60,24 @@ describe("DepedenciesCtrl tests", () => {
         }
     });
 
+    it("PUT /", () => {
+       try {
+           return chai.request("localhost:8080")
+               .put("/")
+               .send({url: "https://github.com/uslava77/test_it_depends"})
+               .then((res: ChaiHttp.Response) => {
+                   expect(res.status).to.be.equal(200);
+                   expect(res.body).to.be.equal({
+                       commits: [{sha: "224558aa2b008a4ae88a36f284ed4797fd78ac63", message: "Initial commit"},
+                           {sha: "1d9a8403594e9ed1defbf1ab4661951d9e3f09e2", message: "helloworld"}]
+                   });
+               })
+               .catch((err: any) => {
+                   console.log("Test failed: " + err);
+                   expect.fail();
+               })
+       } catch (err) {
+            return;
+       }
+    });
 });

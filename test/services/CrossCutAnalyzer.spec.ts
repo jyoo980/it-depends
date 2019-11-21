@@ -13,7 +13,7 @@ describe("CrossCutAnalyzer tests", () => {
             name: "FirstFile",
             additions: 1,
             deletions: 0,
-            diff: {name: "", linesAdded: [], linesDeleted: []}
+            diff: {name: "", linesAdded: [], linesDeleted: [], diffHunks: []}
         };
         commits.push({
             sha: "", author: "", message: "", date: "", additions: 1, deletions: 1,
@@ -34,13 +34,13 @@ describe("CrossCutAnalyzer tests", () => {
             name: "FirstFile",
             additions: 1,
             deletions: 0,
-            diff: {name: "", linesAdded: [], linesDeleted: []}
+            diff: {name: "", linesAdded: [], linesDeleted: [], diffHunks: []}
         };
         let fileInfo2: FileInfo = {
             name: "SecondFile",
             additions: 1,
             deletions: 0,
-            diff: {name: "", linesAdded: [], linesDeleted: []}
+            diff: {name: "", linesAdded: [], linesDeleted: [], diffHunks: []}
         };
         commits.push({
             sha: "", author: "", message: "", date: "", additions: 1, deletions: 1,
@@ -65,19 +65,19 @@ describe("CrossCutAnalyzer tests", () => {
             name: "FirstFile",
             additions: 1,
             deletions: 0,
-            diff: {name: "", linesAdded: [], linesDeleted: []}
+            diff: {name: "", linesAdded: [], linesDeleted: [], diffHunks: []}
         };
         let fileInfo2: FileInfo = {
             name: "SecondFile",
             additions: 1,
             deletions: 0,
-            diff: {name: "", linesAdded: [], linesDeleted: []}
+            diff: {name: "", linesAdded: [], linesDeleted: [], diffHunks: []}
         };
         let fileInfo3: FileInfo = {
             name: "ThirdFile",
             additions: 1,
             deletions: 0,
-            diff: {name: "", linesAdded: [], linesDeleted: []}
+            diff: {name: "", linesAdded: [], linesDeleted: [], diffHunks: []}
         };
         commits.push({
             sha: "", author: "", message: "", date: "", additions: 1, deletions: 1,

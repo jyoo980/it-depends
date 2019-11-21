@@ -9,10 +9,6 @@ import * as fs from "fs-extra";
 /**
  * A class to build cross-cut dependencies (across previous commits) between methods of HEAD.
  */
-
-/**
- * A class to build cross-cut dependencies (across previous commits) between methods of HEAD.
- */
 export default class MethodDependencyBuilder {
     methodParser: MethodParser;
     ghService: GithubService;
@@ -26,10 +22,6 @@ export default class MethodDependencyBuilder {
         this.ghService = new GithubService(this.liveRestClient, this.liveCache);
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> Finished first pass at populating commits method was changed in
     /**
      * Return cross-cut dependencies between methods of HEAD at the given repoUrl
      *
@@ -45,12 +37,6 @@ export default class MethodDependencyBuilder {
         // Get all methods for HEAD
         let headMethods = await this.getAllMethodsAtCommitShaOfRepo(repoUrl, repoName, HEAD);
         let headMethodsMap = this.buildMethodMap(headMethods);
-<<<<<<< HEAD
-=======
-
-        //commitMethodMap[HEAD] = this.buildMethodMap(commitMethodMap[HEAD]);
-        //allCommits.shift(); // remove HEAD
->>>>>>> Finished first pass at populating commits method was changed in
 
         // Get rest of the commits' methods and whether they were changed in this method
         for (let commit of allCommits) {
@@ -101,7 +87,7 @@ export default class MethodDependencyBuilder {
                         (diffHunk.end >= method.startLine &&    // 2) Hunk end is contained within method
                             diffHunk.end <= method.endLine) ||
                         (diffHunk.start <= method.startLine &&  // 3) Method is contained within hunk
-                        diffHunk.end >= method.endLine)) {
+                            diffHunk.end >= method.endLine)) {
                         methodChanged = true;
                         return;
                     }
@@ -146,5 +132,7 @@ export default class MethodDependencyBuilder {
             console.log(`MethodDependencyBuilder::failed to get methods from repo: ${repoName}`);
             throw err;
         }
+
+        return methods;
     }
 }
