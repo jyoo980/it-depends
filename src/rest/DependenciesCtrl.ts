@@ -37,7 +37,9 @@ export default class DependenciesCtrl {
 
         // TODO: add endpoints for getting real data
         // format: /:graph-type/:level?start=<startSHA>&end=<endSHA>&url=<repoURL>
-        this.server.get('/dependency/file', this.getDependencyGraphData);
+        this.server.get('/dependency/file', this.getFileDependencyGraphData);
+        this.server.get('/dependency/class', this.getClassDependencyGraphData);
+        this.server.get('/dependency/method', this.getMethodDependencyGraphData);
 
         // Temporary URL; can change the format once we have a better idea of what request URL should look like/
         // how we cache data, if that's something we will do.
@@ -65,7 +67,7 @@ export default class DependenciesCtrl {
         });
     }
 
-    private async getDependencyGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+    private async getFileDependencyGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
 
         let graphBuilder : FileDependencyGraphBuilder  = new FileDependencyGraphBuilder();
         let urlBuilder : URLBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
@@ -81,6 +83,27 @@ export default class DependenciesCtrl {
         }
         return next();
     }
+
+    private async getClassDependencyGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let urlBuilder : URLBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
+        let repoName = urlBuilder.getRepoName(req.query.url);
+
+        res.status(500);
+        res.send("This endpoint is still being built!");
+        return next();
+    }
+
+    private async getMethodDependencyGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let urlBuilder : URLBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
+        let repoName = urlBuilder.getRepoName(req.query.url);
+
+        res.status(500);
+        res.send("This endpoint is still being built!");
+        return next();
+    }
+
+
+
 
     private getCrossCutFileSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
         // TODO: create more sample datasets to retrieve via sample URL.
