@@ -60,17 +60,19 @@ describe("DepedenciesCtrl tests", () => {
         }
     });
 
-    it("PUT /", () => {
+    it("PUT /init", () => {
        try {
            return chai.request("localhost:8080")
-               .put("/")
-               .send({url: "https://github.com/uslava77/test_it_depends"})
+               .put("/init")
+               .query({url: "https://github.com/uslava77/test_it_depends"})
                .then((res: ChaiHttp.Response) => {
                    expect(res.status).to.be.equal(200);
-                   expect(res.body).to.be.equal({
-                       commits: [{sha: "224558aa2b008a4ae88a36f284ed4797fd78ac63", message: "Initial commit"},
-                           {sha: "1d9a8403594e9ed1defbf1ab4661951d9e3f09e2", message: "helloworld"}]
-                   });
+                   console.log(res.body);
+                   expect(res.body).to.have.key('commits');
+                   expect(res.body.commits).to.have.lengthOf(3);
+                   expect(res.body.commits[0]).to.include({sha: "3a8d4cde468da9bb6732597c1cead8bbacf68afc", message: "add comment"});
+                   expect(res.body.commits[1]).to.include({sha: "1d9a8403594e9ed1defbf1ab4661951d9e3f09e2", message: "helloworld"});
+                   expect(res.body.commits[2]).to.include({sha: "224558aa2b008a4ae88a36f284ed4797fd78ac63", message: "Initial commit"});
                })
                .catch((err: any) => {
                    console.log("Test failed: " + err);
@@ -79,5 +81,22 @@ describe("DepedenciesCtrl tests", () => {
        } catch (err) {
             return;
        }
+    });
+
+    it("GET /crosscut/file", () => {
+        try {
+            return chai.request("localhost:8080")
+                .get("/crosscut/file?start=0&end=3&url=https://github.com/uslava77/test_it_depends")
+                .then((res: ChaiHttp.Response) => {
+                    expect(res.status).to.be.equal(200);
+                    console.log(res.body);
+                })
+                .catch((err: any) => {
+                    console.log("Test failed: " + err);
+                    expect.fail();
+                });
+        } catch (err) {
+            return;
+        }
     });
 });

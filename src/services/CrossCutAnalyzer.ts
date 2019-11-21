@@ -8,25 +8,25 @@ export default class CrossCutAnalyzer {
     public getFileCrossCut(commits: Array<CommitInfo>): AnalysisInfo {
         let type = AnalysisScope.File;
         let size = 0;
-        let headings: Array<string> = [];
+        let names: Array<string> = [];
         let fileToInd: {[name: string]: number} = {};
         let data: Array<Array<number>> = [];
         let curFileInd: Array<number>;
         for (let commit of commits) {
             curFileInd = [];
             for (let file of commit.filesChanged) {
-                // if file not in headings:
-                //  - add file name to headings
+                // if file not in names:
+                //  - add file name to names
                 //  - add row and col to data (0's)
-                if (!headings.includes(file.name)) {
-                    size = headings.push(file.name);
+                if (!names.includes(file.name)) {
+                    size = names.push(file.name);
                     for (let a of data) {
                         a.push(0);
                     }
                     data.push(new Array(size));
                     data[size - 1].fill(0);
                 }
-                curFileInd.push(headings.indexOf(file.name));
+                curFileInd.push(names.indexOf(file.name));
             }
             // incrm all curCommitFiles by one
             for (let indRow of curFileInd) {
@@ -43,6 +43,6 @@ export default class CrossCutAnalyzer {
             let sum = data[i][i]; // all commits this file is in
             data[i] = data[i].map(x => parseFloat((x / sum).toPrecision(4)));
         }
-        return {headings: headings, size: size, type: type, data: data};
+        return {names: names, size: size, type: type, data: data};
     }
 }

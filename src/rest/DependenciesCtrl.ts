@@ -7,11 +7,11 @@ import GithubService from "../services/GithubService";
 import RestClient from "./RestClient";
 import GitCommitCache from "../services/GitCommitCache";
 import CrossCutAnalyzer from "../services/CrossCutAnalyzer";
+import {CommitInfo} from "../interfaces/GitHubTypes";
 
 export default class DependenciesCtrl {
     private server: restify.Server;
-    private ghService: GithubService;
-    private ccAnalyzer: CrossCutAnalyzer;
+    private static ghService: GithubService;
 
     /**
      * Initializes the dependencies server object
@@ -21,8 +21,7 @@ export default class DependenciesCtrl {
             name: 'It-depends',
             version: '1.0.0'
         });
-        this.ghService = new GithubService(new RestClient(), new GitCommitCache());
-        this.ccAnalyzer = new CrossCutAnalyzer();
+        DependenciesCtrl.ghService = new GithubService(new RestClient(), new GitCommitCache());
     }
 
     /**
@@ -114,9 +113,10 @@ export default class DependenciesCtrl {
 
     private async getFileCrossCutGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
         let commits;
+        let ccAnalyzer = new CrossCutAnalyzer();
         try {
-            commits = await this.ghService.listCommitsBetween(req.query.url, req.query.start, req.query.end); // TODO await?
-            res.send(this.ccAnalyzer.getFileCrossCut(commits));
+            commits = await DependenciesCtrl.ghService.listCommitsBetween(req.query.url, req.query.start, req.query.end); // TODO await?
+            res.send(ccAnalyzer.getFileCrossCut(commits));
         } catch (err) {
             res.status(500);
             console.log(err);
@@ -127,8 +127,16 @@ export default class DependenciesCtrl {
     }
 
     private async initURL(req: restify.Request, res: restify.Response, next: restify.Next) {
-        const commits = await this.ghService.getAndSaveAllCommits(req.query.url);
-        res.send({commits: commits});
+        //this.ccAnalyzer = new CrossCutAnalyzer();
+        let commits: Array<CommitInfo>;
+        try {
+            commits = await DependenciesCtrl.ghService.getAndSaveAllCommits(req.query.url);
+            res.send({commits: commits});
+        } catch (err) {
+            res.status(500);
+            console.log(err);
+            res.send(err.message);
+        }
         return next();
     }
 

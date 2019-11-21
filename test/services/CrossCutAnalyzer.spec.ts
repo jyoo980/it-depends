@@ -20,7 +20,7 @@ describe("CrossCutAnalyzer tests", () => {
             filesChanged: [fileInfo]
         });
         let analysisInfo: AnalysisInfo = {
-            headings: ["FirstFile"],
+            names: ["FirstFile"],
             size: 1,
             type: AnalysisScope.File,
             data: [[1]]
@@ -51,7 +51,7 @@ describe("CrossCutAnalyzer tests", () => {
             filesChanged: [fileInfo, fileInfo2]
         });
         let analysisInfo: AnalysisInfo = {
-            headings: ["FirstFile", "SecondFile"],
+            names: ["FirstFile", "SecondFile"],
             size: 2,
             type: AnalysisScope.File,
             data: [[1, 0.5],[1,1]] // changes made to second file in half of first file commits
@@ -96,7 +96,7 @@ describe("CrossCutAnalyzer tests", () => {
             filesChanged: [fileInfo2, fileInfo3]
         });
         let analysisInfo: AnalysisInfo = {
-            headings: ["FirstFile", "SecondFile", "ThirdFile"],
+            names: ["FirstFile", "SecondFile", "ThirdFile"],
             size: 3,
             type: AnalysisScope.File,
             data: [[1, 0.3333, 0.3333],[0.5,1,0.5], [0.5, 0.5, 1]] // changes made to second file in half of first file commits

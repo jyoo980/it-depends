@@ -1,5 +1,5 @@
 export interface AnalysisInfo {
-    headings: Array<string>,
+    names: Array<string>,
     size: number,
     type: AnalysisScope,
     data: Array<Array<number>>
