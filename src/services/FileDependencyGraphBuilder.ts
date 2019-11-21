@@ -8,15 +8,16 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
      *
      * @param directory     directory to store repository contents
      * @param repoName      url of repository to pull down
+     * @param commitSha     sha of commit to base graph off of
      * @returns any
      *
      */
-    public async getDependenciesFromProject(directory: string, repoUrl: string): Promise<DependencyMatrix> {
-        let contents = await this.fileSystem.readRepoFromDisk(directory, repoUrl);
+    public async getDependenciesFromProject(directory: string, repoUrl: string, commitSha: string): Promise<DependencyMatrix> {
+        let contents = await this.fileSystem.readRepoFromDisk(directory, repoUrl, commitSha);
         let fileNames = Object.keys(contents).map((name) => {
             let lastIndexSlash = name.lastIndexOf("/");
             name = name.substring(lastIndexSlash + 1);
-            return name.replace(/.java+$/, "")
+            return name.replace(/.java+$/, "");
         });
         let dependencyData = this.initializeEmptyMatrix(fileNames.length);
 

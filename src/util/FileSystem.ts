@@ -67,8 +67,10 @@ export default class FileSystem {
         return contents.map((fileAsText) => fileAsText.replace(/\r/g, ""));
     }
 
-    public async readRepoFromDisk(dir: string, repoName: string): Promise<any> {
-        const fullPath: string = `${dir}/${repoName}-PARSED.txt`;
+    public async readRepoFromDisk(dir: string, repoName: string, commitSha?: string): Promise<any> {
+        let fullPath: string = commitSha ? `${dir}/${repoName}--${commitSha}-PARSED.txt` : `${dir}/${repoName}-PARSED.txt`;
+
+
         try {
             const dataAsString = await fs.readFile(fullPath, "utf-8");
             return JSON.parse(dataAsString);
