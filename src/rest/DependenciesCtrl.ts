@@ -70,8 +70,15 @@ export default class DependenciesCtrl {
         let graphBuilder : FileDependencyGraphBuilder  = new FileDependencyGraphBuilder();
         let urlBuilder : URLBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
         let repoName = urlBuilder.getRepoName(req.query.url);
-        let data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.start);
-        res.send(data);
+        let data;
+        try {
+            data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.start);
+            res.send(data);
+        } catch (err) {
+            res.status(500);
+            console.log(err);
+            res.send(err.message);
+        }
         return next();
     }
 
