@@ -3,6 +3,7 @@ import URLBuilder from "./URLBuilder";
 import {CommitInfo} from "../interfaces/GitHubTypes";
 import ResponseParser from "./ResponseParser";
 import {ICommitCache} from "./GitCommitCache";
+import AccessTokenManager from "../util/AccessTokenManager";
 
 export interface GithubServiceError extends Error {
     message: string,
@@ -17,7 +18,7 @@ export default class GithubService {
 
     constructor(restClient: IRestClient, cache: ICommitCache) {
         this.restClient = restClient;
-        this.urlBuilder = new URLBuilder( "");
+        this.urlBuilder = new URLBuilder( AccessTokenManager.getGithubAccessToken());
         this.responseParser = new ResponseParser();
         this.cache = cache;
     }
