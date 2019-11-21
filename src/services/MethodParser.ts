@@ -2,7 +2,7 @@ import {Method} from "../interfaces/Method";
 import FileSystem from "../util/FileSystem";
 
 /**
- * A class to extract all the methods from a given repository and commit sha.
+ * A class to extract all the methods using syntactic analysis from a given repository and commit sha.
  */
 export default class MethodParser {
 
@@ -44,21 +44,35 @@ export default class MethodParser {
     public getMethodsFromJavaFile(javaFileString, fileName): Method[] {
         let javaFileStringArr = javaFileString.split("\n");
 
-        let regexp = RegExp("^(\\t|    )(public|private)( )(static )?([\\w\\d<>]* )+[\\w\\d_.-]+((\\((( )*[\\w\\d\\[\\]<>,_.-]+ [\\w\\d_.-]+,?)*\\))) {$");
+        let regexp = RegExp("^(\\t|    )(public|private|protected)( )(static )?([\\w\\d<>]* )+[\\w\\d_.-]+((\\((( )*[\\w\\d\\[\\]<>,_.-]+ [\\w\\d_.-]+,?)*\\))) {$");
         let endMethodRegexp = RegExp("^(\\t|    )}$");
 
         let methods: Method[] = [];
 
         let lineNumber = 1;
+        let methodAsText = "";
+        let parsingMethod: boolean = false;
         for (let line of javaFileStringArr) {
             // Found a method!
             if (regexp.test(line)) {
                 methods.push(this.parseMethodSignature(line, lineNumber, fileName));
+                parsingMethod = true;
             }
 
             // Found the end of the latest method found, update its endLine
+            // update its content and finish process of parsing this method
             if (endMethodRegexp.test(line) && methods.length > 0) {
+                methodAsText += line;
                 methods[methods.length - 1].endLine = lineNumber;
+                methods[methods.length - 1].content = methodAsText;
+                methodAsText = "";
+                parsingMethod = false;
+            }
+
+            // If we are in the process of parsing a method,
+            // continue building the method contents
+            if (parsingMethod) {
+                methodAsText += line;
             }
 
             lineNumber++;

@@ -6,8 +6,10 @@ export class Method {
     startLine: number;
     endLine: number;
     returnType: string;
-    file: string; // which file path this method is in
-    commitsChangedIn: string[]; // previous commits this method was changed in
+    file: string;                   // which file path this method is in
+    commitsChangedIn: string[];     // previous commits this method was changed in
+    content: string                 // the actual content of the method
+    dependencies: string[];         // list of method identifiers that this method depends on
 
     constructor(name, file, startLine, endLine, returnType) {
         this.name = name;
@@ -16,6 +18,7 @@ export class Method {
         this.endLine = endLine;
         this.returnType = returnType;
         this.commitsChangedIn = [];
+        this.dependencies = [];
     }
 
     /**
@@ -25,6 +28,15 @@ export class Method {
      */
     addCommitChangedIn(commitSha: string) {
         this.commitsChangedIn.push(commitSha);
+    }
+
+    /**
+     * Adds the given method identifier to the method dependencies of this method
+     *
+     * @param methodIdentifier the identifier of the method this depends on
+     */
+    addMethodDependency(methodIdentifier: string) {
+        this.dependencies.push(methodIdentifier);
     }
 
     /**
