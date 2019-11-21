@@ -16,16 +16,17 @@ describe("FileDependencyGraphBuilder tests", () => {
         const sampleRepo: string = "https://github.com/jyoo980/java-practice";
             ghService = new GithubService(liveRestClient, liveCache);
             let response: string;
+            let commit = "3fc4f208530f86a7cfef70f1010a52670e5f972a";
             try {
-                response = await ghService.getAndSaveRepo(sampleRepo);
+                response = await ghService.getAndSaveRepo(sampleRepo, commit);
             } catch (err) {
                 response = err;
                 expect.fail(err);
             } finally {
-                expect(response).to.equal("./data/java-practice-PARSED.txt");
+                expect(response).to.equal("./data/java-practice--" + commit + "-PARSED.txt");
                 let fileDep;
                 try {
-                    fileDep = await fileDepGraph.getDependenciesFromProject("./data/", "java-practice");
+                    fileDep = await fileDepGraph.getDependenciesFromProject("./data/", "java-practice", commit);
                 } catch (err) {
                     throw err;
                 } finally {
@@ -43,16 +44,17 @@ describe("FileDependencyGraphBuilder tests", () => {
         const sampleRepo: string = "https://github.com/scveloso/DNS-Resolver";
         ghService = new GithubService(liveRestClient, liveCache);
         let response: string;
+        let commit = "3e6288124cce43a861603c331c9419531595f707";
         try {
-            response = await ghService.getAndSaveRepo(sampleRepo);
+            response = await ghService.getAndSaveRepo(sampleRepo, commit);
         } catch (err) {
             response = err;
             expect.fail(err);
         } finally {
-            expect(response).to.equal("./data/DNS-Resolver-PARSED.txt");
+            expect(response).to.equal("./data/DNS-Resolver--"+ commit+ "-PARSED.txt");
             let fileDep;
             try {
-                fileDep = await fileDepGraph.getDependenciesFromProject("./data/", "DNS-Resolver");
+                fileDep = await fileDepGraph.getDependenciesFromProject("./data/", "DNS-Resolver", commit);
             } catch (err) {
                 throw err;
             } finally {

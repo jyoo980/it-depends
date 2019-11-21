@@ -1,5 +1,8 @@
 import restify = require('restify');
 import {DependencyTypes} from "../model/DependencyMatrix";
+import FileDependencyGraphBuilder from "../services/FileDependencyGraphBuilder";
+import URLBuilder from "../services/URLBuilder";
+import AccessTokenManager from "../util/AccessTokenManager";
 
 export default class DependenciesCtrl {
     private server: restify.Server;
@@ -27,12 +30,14 @@ export default class DependenciesCtrl {
         this.server.use(restify.plugins.acceptParser(this.server.acceptable));
         this.server.use(restify.plugins.queryParser());
         this.server.use(restify.plugins.bodyParser());
+        this.server.use(restify.plugins.queryParser({ mapParams: true }));
 
         // TODO: add endpoints for getting other data (e.g. initializing the visualization and getting commit info,
         // maybe another endpoint for 'flushing' data, if someone refreshes/ changes the git URL)
 
         // TODO: add endpoints for getting real data
-        // possible format: /<graph-type>/<level>/:<startcommit SHA>..<endcommit SHA>
+        // format: /:graph-type/:level?start=<startSHA>&end=<endSHA>&url=<repoURL>
+        this.server.get('/dependency/file', this.getDependencyGraphData);
 
         // Temporary URL; can change the format once we have a better idea of what request URL should look like/
         // how we cache data, if that's something we will do.
@@ -58,6 +63,16 @@ export default class DependenciesCtrl {
         return this.server.close(() => {
             console.log("CLOSING SERVER");
         });
+    }
+
+    private async getDependencyGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+
+        let graphBuilder : FileDependencyGraphBuilder  = new FileDependencyGraphBuilder();
+        let urlBuilder : URLBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
+        let repoName = urlBuilder.getRepoName(req.query.url);
+        let data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.start);
+        res.send(data);
+        return next();
     }
 
     private getCrossCutFileSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
