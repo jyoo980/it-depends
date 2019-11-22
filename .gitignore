@@ -12,3 +12,4 @@ test/*.map
 node_modules/
 data/
 package-lock.json
+src/util/AccessTokenManager.ts

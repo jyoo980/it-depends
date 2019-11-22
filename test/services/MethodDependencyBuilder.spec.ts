@@ -9,9 +9,26 @@ describe("MethodDependencyBuilder tests", function () {
         let getResultsMethod = "src/ca/ubc/cs/cs317/dnslookup/DNSLookupService.java/getResults";
         let equalsMethod = "src/ca/ubc/cs/cs317/dnslookup/ResourceRecord.java/equals";
         let getNameFromPointerMethod = "src/ca/ubc/cs/cs317/dnslookup/DNSLookupService.java/getNameFromPointerInBuffer";
+        let addResultMethod = "src/ca/ubc/cs/cs317/dnslookup/DNSCache.java/addResult";
 
         const sampleRepo: string = "https://github.com/scveloso/DNS-Resolver";
         let headMethodsMap = await mdb.execute(sampleRepo);
+
+        expect(headMethodsMap[addResultMethod].content).to.equal("    " +
+            "public void addResult(ResourceRecord record) {" +
+            "        if (!record.isStillValid()) return;" +
+            "        Map<ResourceRecord, ResourceRecord> results = cachedResults.get(record.getNode());" +
+            "        if (results == null) {" +
+            "            results = new HashMap<>();" +
+            "            cachedResults.put(record.getNode(), results);" +
+            "        }" +
+            "        ResourceRecord oldRecord = results.get(record);" +
+            "        if (oldRecord == null || oldRecord.expiresBefore(record))" +
+            "            results.put(record, record);" +
+            "    }");
+        expect(headMethodsMap[addResultMethod].dependencies).to.contain("src/ca/ubc/cs/cs317/dnslookup/ResourceRecord.java/expiresBefore");
+        expect(headMethodsMap[addResultMethod].dependencies).to.contain("src/ca/ubc/cs/cs317/dnslookup/ResourceRecord.java/getNode");
+        expect(headMethodsMap[addResultMethod].dependencies).to.contain("src/ca/ubc/cs/cs317/dnslookup/ResourceRecord.java/isStillValid");
 
         expect(headMethodsMap[getResultsMethod].commitsChangedIn.length).to.equal(3);
         expect(headMethodsMap[getResultsMethod].commitsChangedIn).to.contain("3e6288124cce43a861603c331c9419531595f707");
