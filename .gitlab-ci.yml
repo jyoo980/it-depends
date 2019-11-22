@@ -9,7 +9,6 @@ stages:
 
 Build:
   stage: build
-  script:
     - yarn install
     - yarn build
 
