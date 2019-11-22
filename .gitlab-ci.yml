@@ -9,8 +9,9 @@ stages:
 
 Build:
   stage: build
-  script:
+  before_script:
     - yarn install
+  script:
     - yarn run build
 
 Production:
