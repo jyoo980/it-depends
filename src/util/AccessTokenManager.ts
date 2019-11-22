@@ -1,5 +1,5 @@
 export default class AccessTokenManager {
     public static getGithubAccessToken() {
-        return "PUT YOUR GITHUB ACCESS TOKEN HERE";
+        return (process.env.GITHUB_API_KEY);
     }
 }
