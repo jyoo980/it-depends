@@ -56,6 +56,8 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
     public getDependenciesFromFile(fileContents: string, fileNames: string[]) {
         let fileLines = fileContents.split("\n");
         let importRegex = RegExp("^(\\t|    )?import");
+        let singleLineCommentRegex = RegExp("^(\\t|    )?(\\/\\/)");
+        let multiLineCommentRegex = RegExp("^(\\t|    )?(\\/\\*|\\*)");
 
         let dependencies = [];
 
@@ -66,7 +68,9 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
             }
 
             // skip comments
-            // TODO
+            if(singleLineCommentRegex.test(line) || multiLineCommentRegex.test(line)) {
+                return;
+            }
 
             // check whether dependency exists.
             fileNames.forEach((name: string) => {
