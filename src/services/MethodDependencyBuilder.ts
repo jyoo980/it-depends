@@ -114,7 +114,7 @@ export default class MethodDependencyBuilder {
                         (diffHunk.end >= method.startLine &&    // 2) Hunk end is contained within method
                             diffHunk.end <= method.endLine) ||
                         (diffHunk.start <= method.startLine &&  // 3) Method is contained within hunk
-                        diffHunk.end >= method.endLine)) {
+                            diffHunk.end >= method.endLine)) {
                         methodChanged = true;
                         return;
                     }
