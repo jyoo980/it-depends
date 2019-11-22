@@ -17,9 +17,11 @@ Production:
   image: ruby:latest
   only:
     - master
+    - slava/fix-deploy
   stage: deploy
   script:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
+    - sed -i "s/PUT YOUR GITHUB ACCESS TOKEN HERE/${GITHUB_API_KEY}/" src/util/AccessTokenManager.ts
     - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
