@@ -161,7 +161,7 @@ export default class DependenciesCtrl {
         let sampleData = {
             names: ["Foo.java", "Foo.java", "Bar.java"],
             data: [
-                [[], [DependencyTypes.Aggregation], []],
+                [[], [DependencyTypes.Association], []],
                 [[], [], [DependencyTypes.Inheritance]],
                 [[], [], []]
             ]
@@ -191,7 +191,7 @@ export default class DependenciesCtrl {
         let sampleData = {
             names: ["Foo", "Bar", "Baz"],
             data: [
-                [[], [DependencyTypes.Aggregation], []],
+                [[], [DependencyTypes.Association], []],
                 [[], [], [DependencyTypes.Inheritance]],
                 [[], [], []]
             ]
