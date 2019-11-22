@@ -10,10 +10,8 @@ stages:
 Build:
   stage: build
   script:
-    - yarn add @types/jszip
-    - yarn add jszip
     - yarn install
-    - yarn build
+    - yarn run build
 
 Production:
   image: ruby:latest
