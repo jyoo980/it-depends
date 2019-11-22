@@ -1,5 +1,5 @@
 import * as fs from "fs-extra";
-import * as JSZip from "JSZip";
+import * as JSZip from "jszip";
 import * as dash from "lodash";
 
 export interface FileSystemError extends Error {
