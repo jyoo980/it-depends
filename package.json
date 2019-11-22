@@ -9,7 +9,8 @@
   "private": false,
   "scripts": {
     "build": "tsc src/**/*.ts test/**/*.ts",
-    "test": "yarn build && mocha --require ts-node/register test/*.ts test/**/*.ts"
+    "test": "yarn build && mocha --require ts-node/register test/*.ts test/**/*.ts",
+    "start": "node src/rest/server.js"
   },
   "dependencies": {
     "@types/axios": "^0.14.0",

@@ -1,8 +1,4 @@
-image: node:8.12.0
-cache:
-  paths:
-    - node_modules/
-    - .yarn
+image: node:latest
 
 before_script:  
   - apt-get update -qq && apt-get install
@@ -13,12 +9,8 @@ stages:
 
 Build:
   stage: build
-  tags:
-    - node
-  before_script: 
-    - yarn config set cache-folder .yarn
-    - yarn install 
   script:
+    - yarn install
     - yarn build
 
 Production:
