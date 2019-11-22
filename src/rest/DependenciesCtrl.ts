@@ -50,7 +50,7 @@ export default class DependenciesCtrl {
         this.server.get('/crosscut/functions/sample/:num', this.getCrossCutFunctionSampleData);
         this.server.get('/dependency/functions/sample/:num', this.getDependencyFunctionSampleData);
 
-        this.server.listen(process.env.PORT, () => {
+        this.server.listen((process.env.PORT || 8080), () => {
             console.log("SERVER LISTENING AT: " + this.server.url);
         });
     }
