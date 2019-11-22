@@ -17,7 +17,6 @@ Production:
   image: ruby:latest
   only:
     - master
-    - slava/fix-deploy
   stage: deploy
   script:
     - apt-get update -qy
