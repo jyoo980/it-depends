@@ -24,7 +24,7 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
         let dependencyMatrix = new DependencyMatrix();
         dependencyMatrix.names = fileNames;
 
-        console.log(fileNames);
+        // console.log(fileNames);
 
         for(let file in contents) {
             let lastIndexSlash = file.lastIndexOf("/");
@@ -34,7 +34,6 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
                 return name !== fileName;
             });
             let dependenciesInFile = this.getDependenciesFromClass(contents[file], fileName, dependenciesToSearch);
-
 
             dependenciesInFile.forEach((depVal, depKey) => {
                 let from = fileNames.indexOf(fileName);
@@ -84,8 +83,9 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
             fileNames.forEach((name: string) => {
                 let currDepSet = dependencies.get(name);
 
+
                 // is current line class declaration?
-                let classDeclRegex = RegExp("^public class "+ currFile + ")");
+                let classDeclRegex = RegExp("^(public class "+ currFile + ")");
                 if(classDeclRegex.test(line)) {
                     let inheritanceContext = {};
                     let splitLine = line.split("extends");
@@ -96,7 +96,7 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
                     // check for inheritance
                     let inheritanceRegex = RegExp( "( " + name + "( |{))");
                     if(inheritanceContext["inheritance"] && inheritanceRegex.test(inheritanceContext["inheritance"])) {
-                        if(!currDepSet.contains(DependencyTypes.Inheritance)) {
+                        if(!currDepSet.includes(DependencyTypes.Inheritance)) {
                             currDepSet.push(DependencyTypes.Inheritance);
                         }
                     }
@@ -104,7 +104,7 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
                     // check for implementation
                     let implementationRegex = RegExp("( " + name + "( |,|{))");
                     if(inheritanceContext["implementation"] && implementationRegex.test(inheritanceContext["implementation"])) {
-                        if(!currDepSet.contains(DependencyTypes.Implementation)) {
+                        if(!currDepSet.includes(DependencyTypes.Implementation)) {
                             currDepSet.push(DependencyTypes.Implementation);
                         }
                     }
@@ -113,11 +113,12 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
                 }
 
                 // handle HASA relationship (association)
-                let hasARegex = RegExp("^(\\\\t|    )?(public |private |protected )(final |static ){0,2}([\\w\\d<>]* )([\\w\\d_.-]+)( )?(;$|=)");
-                let hasANameRegex = RegExp("^(\\\\t|    )?(public |private |protected )(final |static ){0,2}("+
-                    name + "|([\\w\\d]*<" + name + ">))");
+                let hasARegex = RegExp("(\\t|    )?(public |private |protected )(final |static ){0,2}([\\w\\d<>, ]* )([\\w\\d_.-]+)( )?(;$|=)");
+                // let hasANameRegex = RegExp("^(\\t|    )?(public |private |protected )(final |static ){0,2}("+name+"|[\\w\\d]*<"+name+">)");
+                let hasANameRegex = RegExp("^(\\t|    )?(public |private |protected )(final |static ){0,2}("+name+
+                    "|[\\w\\d]*<"+name+"|[\\w\\d<>, ]*"+name+")");
                 if(hasARegex.test(line)) {
-                    if(hasANameRegex.test(line) && !currDepSet.contains(DependencyTypes.Association)) {
+                    if(hasANameRegex.test(line) && !currDepSet.includes(DependencyTypes.Association)) {
                         currDepSet.push(DependencyTypes.Association);
                     }
                     return;
@@ -128,7 +129,7 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
                 let brackRegex = RegExp("(\\(" + name + " )");
                 let collRegex = RegExp("<" + name + "|" + name + ">");
                 if(spaceRegex.test(line) || brackRegex.test(line) || collRegex.test(line)) {
-                    if(!currDepSet.contains(DependencyTypes.Dependency)) {
+                    if(!currDepSet.includes(DependencyTypes.Dependency)) {
                         currDepSet.push(DependencyTypes.Dependency);
                     }
                 }
