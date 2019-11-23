@@ -1,12 +1,10 @@
 export enum DependencyTypes {
-    Association = "association",
-    Inheritance = "inheritance",
-    Implementation = "implementation",
-    Dependency = "dependency",
-    Aggregation = "aggregation",
-    Composition = "composition",
-    References = "references",
-    Calls = "calls"
+    Association = "association", // HASA
+    Inheritance = "inheritance", // extends
+    Implementation = "implementation", // implements
+    Dependency = "dependency", // general dependency (usage)
+    References = "references", // file references
+    Calls = "calls" // calls method
 }
 
 export class DependencyMatrix {

@@ -8,6 +8,7 @@ import RestClient from "./RestClient";
 import GitCommitCache from "../services/GitCommitCache";
 import CrossCutAnalyzer from "../services/CrossCutAnalyzer";
 import {CommitInfo} from "../interfaces/GitHubTypes";
+import ClassDependencyGraphBuilder from "../services/ClassDependencyGraphBuilder";
 
 export default class DependenciesCtrl {
     private server: restify.Server;
@@ -94,11 +95,18 @@ export default class DependenciesCtrl {
     }
 
     private async getClassDependencyGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let graphBuilder : ClassDependencyGraphBuilder  = new ClassDependencyGraphBuilder();
         let urlBuilder : URLBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
         let repoName = urlBuilder.getRepoName(req.query.url);
-
-        res.status(500);
-        res.send("This endpoint is still being built!");
+        let data;
+        try {
+            data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.start);
+            res.send(data);
+        } catch (err) {
+            res.status(500);
+            console.log(err);
+            res.send(err.message);
+        }
         return next();
     }
 
@@ -161,7 +169,7 @@ export default class DependenciesCtrl {
         let sampleData = {
             names: ["Foo.java", "Foo.java", "Bar.java"],
             data: [
-                [[], [DependencyTypes.Aggregation], []],
+                [[], [DependencyTypes.Association], []],
                 [[], [], [DependencyTypes.Inheritance]],
                 [[], [], []]
             ]
@@ -191,7 +199,7 @@ export default class DependenciesCtrl {
         let sampleData = {
             names: ["Foo", "Bar", "Baz"],
             data: [
-                [[], [DependencyTypes.Aggregation], []],
+                [[], [DependencyTypes.Association], []],
                 [[], [], [DependencyTypes.Inheritance]],
                 [[], [], []]
             ]
