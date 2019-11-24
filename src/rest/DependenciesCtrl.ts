@@ -29,10 +29,10 @@ export default class DependenciesCtrl {
             origins: ['https://daviidli.github.io'],
             allowHeaders: [],
             exposeHeaders: []
-          })
+          });
            
-          this.server.pre(cors.preflight)
-          this.server.use(cors.actual)
+          this.server.pre(cors.preflight);
+          this.server.use(cors.actual);
 
         DependenciesCtrl.ghService = new GithubService(new RestClient(), new GitCommitCache());
     }
@@ -96,7 +96,8 @@ export default class DependenciesCtrl {
         let repoName = urlBuilder.getRepoName(req.query.url);
         let data;
         try {
-            data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.start);
+            await DependenciesCtrl.ghService.getAndSaveRepo(req.query.url, req.query.end);
+            data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.end);
             res.send(data);
         } catch (err) {
             res.status(500);
@@ -112,7 +113,8 @@ export default class DependenciesCtrl {
         let repoName = urlBuilder.getRepoName(req.query.url);
         let data;
         try {
-            data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.start);
+            await DependenciesCtrl.ghService.getAndSaveRepo(req.query.url, req.query.end);
+            data = await graphBuilder.getDependenciesFromProject("./data", repoName, req.query.end);
             res.send(data);
         } catch (err) {
             res.status(500);
