@@ -266,5 +266,12 @@ export default class DependenciesCtrl {
         res.send(sampleData);
         return next();
     }
+
+    public static getGHService(): GithubService {
+        if (DependenciesCtrl.ghService === undefined) {
+            DependenciesCtrl.ghService = new GithubService(new RestClient(), new GitCommitCache());
+        }
+        return DependenciesCtrl.ghService;
+    }
 }
 

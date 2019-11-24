@@ -54,8 +54,10 @@ export default class CrossCutAnalyzer {
         // only do methDepBuilder.exec if it hasn't been done yet or there was a url change
         if (CrossCutAnalyzer.methodsMap === undefined || CrossCutAnalyzer.methodsMap.url != url) {
             methDepBuilder = new MethodDependencyBuilder(ghService);
-            CrossCutAnalyzer.methodsMap.url = url;
-            CrossCutAnalyzer.methodsMap.map = await methDepBuilder.execute(url);
+            CrossCutAnalyzer.methodsMap = {
+                url: url,
+                map: await methDepBuilder.execute(url)
+            };
         }
 
         let allowedCommits: Array<CommitInfo> = await ghService.listCommitsBetween(url, start, end);
