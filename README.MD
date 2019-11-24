@@ -1,4 +1,4 @@
-# it-depends
+# it-depends https://gitlab.com/jamesyoo/it-depends/badges/master/build.svg
 
 ![viz-screenshot](./media/it-depends-viz.png)
 
