@@ -1,5 +1,7 @@
 # it-depends
 
+![viz-screenshot](./media/it-depends-viz.png)
+
 This is a repository for it-depends. This tool enables developers to more easily visualize dependencies between
 entities in a software system (classes, files, etc...) which cut across commit history. Development is currently in the 
 early stages, so changes to this repo will be constant.
