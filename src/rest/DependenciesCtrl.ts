@@ -62,6 +62,7 @@ export default class DependenciesCtrl {
         this.server.get('/dependency/class', this.getClassDependencyGraphData);
         this.server.get('/dependency/method', this.getMethodDependencyGraphData);
         this.server.get('/crosscut/file', this.getFileCrossCutGraphData);
+        this.server.get('/crosscut/method', this.getMethodCrossCutGraphData);
 
         // Temporary URL; can change the format once we have a better idea of what request URL should look like/
         // how we cache data, if that's something we will do.
@@ -131,6 +132,20 @@ export default class DependenciesCtrl {
         return next();
     }
 
+    private async getMethodCrossCutGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let analysisInfo;
+        let ccAnalyzer = new CrossCutAnalyzer();
+        try {
+            analysisInfo = await ccAnalyzer.getMethodCrossCut(req.query.url, DependenciesCtrl.ghService,
+                req.query.start, req.query.end);
+            res.send(analysisInfo);
+        } catch (err) {
+            res.status(500);
+            console.log(err);
+            res.send(err.message);
+        }
+        return next();
+    }
     private async getFileCrossCutGraphData(req: restify.Request, res: restify.Response, next: restify.Next) {
         let commits;
         let ccAnalyzer = new CrossCutAnalyzer();
