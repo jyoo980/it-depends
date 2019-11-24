@@ -26,7 +26,7 @@ export default class DependenciesCtrl {
 
         const cors = corsMiddleware({
             preflightMaxAge: 5, //Optional
-            origins: ['http://daviidli.github.io'],
+            origins: ['https://daviidli.github.io'],
             allowHeaders: [],
             exposeHeaders: []
           })
