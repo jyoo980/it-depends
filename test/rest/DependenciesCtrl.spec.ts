@@ -22,7 +22,7 @@ describe("DepedenciesCtrl tests", () => {
     it("GET /dependency/file", () => {
         try {
             return chai.request("localhost:8080")
-                .get("/dependency/file?start=3e6288124cce43a861603c331c9419531595f707&end=test2&url=https://github.com/scveloso/DNS-Resolver")
+                .get("/dependency/file?end=3e6288124cce43a861603c331c9419531595f707&start=test2&url=https://github.com/scveloso/DNS-Resolver")
                 .then((res: ChaiHttp.Response) => {
                     expect(res.status).to.be.equal(200);
                     console.log(res.body);
@@ -39,7 +39,7 @@ describe("DepedenciesCtrl tests", () => {
     it("GET /dependency/class", () => {
         try {
             return chai.request("localhost:8080")
-                .get("/dependency/class?start=3e6288124cce43a861603c331c9419531595f707&end=test2&url=https://github.com/scveloso/DNS-Resolver")
+                .get("/dependency/class?end=3e6288124cce43a861603c331c9419531595f707&start=test2&url=https://github.com/scveloso/DNS-Resolver")
                 .then((res: ChaiHttp.Response) => {
                     expect(res.status).to.be.equal(200);
                     console.log(res.body);
