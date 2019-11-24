@@ -121,7 +121,25 @@ describe("DepedenciesCtrl tests", () => {
 
         try {
             return chai.request("localhost:8080")
-                .get("/crosscut/method?start=0&end=3&url=https://github.com/uslava77/test_it_depends")
+                .get("/crosscut/method?start=0&end=7&url=https://github.com/uslava77/test_it_depends")
+                .then((res: ChaiHttp.Response) => {
+                    expect(res.status).to.be.equal(200);
+                    console.log(res.body);
+                })
+                .catch((err: any) => {
+                    console.log("Test failed: " + err);
+                    expect.fail();
+                });
+        } catch (err) {
+            return;
+        }
+    }).timeout(10000);
+
+    it("GET /crosscut/method different url", () => {
+
+        try {
+            return chai.request("localhost:8080")
+                .get("/crosscut/method?start=0&end=3&url=https://github.com/scveloso/DNS-Resolver")
                 .then((res: ChaiHttp.Response) => {
                     expect(res.status).to.be.equal(200);
                     console.log(res.body);
