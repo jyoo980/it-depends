@@ -9,6 +9,7 @@ import GitCommitCache from "../services/GitCommitCache";
 import CrossCutAnalyzer from "../services/CrossCutAnalyzer";
 import {CommitInfo} from "../interfaces/GitHubTypes";
 import ClassDependencyGraphBuilder from "../services/ClassDependencyGraphBuilder";
+import corsMiddleware = require('restify-cors-middleware');
 
 export default class DependenciesCtrl {
     private server: restify.Server;
@@ -22,6 +23,17 @@ export default class DependenciesCtrl {
             name: 'It-depends',
             version: '1.0.0'
         });
+
+        const cors = corsMiddleware({
+            preflightMaxAge: 5, //Optional
+            origins: ['https://daviidli.github.io'],
+            allowHeaders: [],
+            exposeHeaders: []
+          })
+           
+          this.server.pre(cors.preflight)
+          this.server.use(cors.actual)
+
         DependenciesCtrl.ghService = new GithubService(new RestClient(), new GitCommitCache());
     }
 
