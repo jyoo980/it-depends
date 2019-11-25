@@ -62,8 +62,15 @@ describe("FileDependencyGraphBuilder tests", () => {
                 ["DNSCache", "DNSLookupService", "DNSNode", "RecordType", "ResourceRecord"].forEach((file) => {
                     expect(fileDep.names).to.contain(file);
                 });
+
+                expect(fileDep.size.length).to.equal(5);
+                expect(fileDep.size[0]).to.equal(92);
+                expect(fileDep.size[1]).to.equal(459);
+                expect(fileDep.size[2]).to.equal(57);
+                expect(fileDep.size[3]).to.equal(31);
+                expect(fileDep.size[4]).to.equal(102);
+
                 expect(fileDep.data.length).to.equal(5);
-                console.log(fileDep.data);
                 expect(fileDep.data[0][0]).to.be.empty;
                 expect(fileDep.data[0][1]).to.be.empty;
                 expect(fileDep.data[0][2]).to.contain(DependencyTypes.References);

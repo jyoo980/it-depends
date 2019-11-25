@@ -40,6 +40,8 @@ describe("ClassDependencyGraphBuilder tests", () => {
                 expect(fileDep.data[0][1]).to.contain(DependencyTypes.Dependency);
                 // Convertible extends Car
                 expect(fileDep.data[27][11]).to.contain(DependencyTypes.Inheritance);
+                // Landline implements Communicator
+                expect(fileDep.data[22][20]).to.contain(DependencyTypes.Implementation);
             }
         }
     });
@@ -66,6 +68,14 @@ describe("ClassDependencyGraphBuilder tests", () => {
                 ["DNSCache", "DNSLookupService", "DNSNode", "RecordType", "ResourceRecord"].forEach((file) => {
                     expect(fileDep.names).to.contain(file);
                 });
+
+                expect(fileDep.size.length).to.equal(5);
+                expect(fileDep.size[0]).to.equal(92);
+                expect(fileDep.size[1]).to.equal(459);
+                expect(fileDep.size[2]).to.equal(57);
+                expect(fileDep.size[3]).to.equal(31);
+                expect(fileDep.size[4]).to.equal(102);
+
                 expect(fileDep.data.length).to.equal(5);
                 expect(fileDep.data[0][0]).to.be.empty;
                 expect(fileDep.data[0][1]).to.be.empty;
