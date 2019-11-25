@@ -4,6 +4,13 @@ This document serves as a general breakdown of tasks + contributions performed b
 
 ## [Sam Veloso](https://github.com/scveloso)
 
+I worked on extracting information required for building dependencies across methods of a project. This involved an algorithm that, for all methods at a certain commit of a project, get all the previous commits that each method was changed in. In addition, for each of those methods, which of the other methods does it call (depend on). ```MethodParser.ts``` extracted methods using lexical analysis from a project while ```MethodDependencyBuilder.ts``` built the actual dependencies across the methods. 
+
+## Selected Contributions
+* `MethodParser.ts`
+* `MethodDependencyBuilder.ts`
+* `Method.ts`
+
 ## [Slava Uryumtsev](https://github.com/uslava77)
 
 ## [David Li](https://github.com/daviidli)
