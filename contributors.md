@@ -6,7 +6,7 @@ This document serves as a general breakdown of tasks + contributions performed b
 
 I worked on extracting information required for building dependencies across methods of a project. This involved an algorithm that, for all methods at a certain commit of a project, get all the previous commits that each method was changed in. In addition, for each of those methods, which of the other methods does it call (depend on). ```MethodParser.ts``` extracted methods using lexical analysis from a project while ```MethodDependencyBuilder.ts``` built the actual dependencies across the methods. 
 
-## Selected Contributions
+#### Selected Contributions
 * `MethodParser.ts`
 * `MethodDependencyBuilder.ts`
 * `Method.ts`
@@ -14,6 +14,12 @@ I worked on extracting information required for building dependencies across met
 ## [Slava Uryumtsev](https://github.com/uslava77)
 
 ## [David Li](https://github.com/daviidli)
+
+I worked on creating the frontend and the visualization. The code for the frontend can be found in this [repo](https://github.com/daviidli/it-depends-vis). The main UI elements of the frontend are created using React.js and [Material UI React Components](https://material-ui.com/). The actual visualization is made with d3.js using d3's [force directed graph layout](https://github.com/d3/d3-force). 
+
+#### Selected Contributions (in [it-depends-vis](https://github.com/daviidli/it-depends-vis))
+* `Visualization.tsx`
+* `App.tsx`
 
 ## [Kiyomi H](https://github.com/kiyomih)
 
