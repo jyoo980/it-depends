@@ -16,6 +16,8 @@ early stages, so changes to this repo will be constant.
 
 ## Contributors
 
+For a more detailed breakdown of contributions, please read [here](./contributors.md)
+
 * [Sam Veloso](https://github.com/scveloso)
 * [Slava Uryumtsev](https://github.com/uslava77)
 * [David Li](https://github.com/daviidli)
