@@ -32,4 +32,13 @@ Based on what we observed in the user studies, we made several changes to our in
 
 ## End user-study outcomes
 
+After making the changes after our initial user studies, we ran an acceptance test. Here are some findings:
+* User immediately jumped to click the “?” button when they were confused
+* Initially confused with the large number of nodes that popped up
+  * “Is there a way to filter nodes by size?”
+* User enjoyed how node sizes helped to visualize the sizes of files.
+* “It’ll probably take time to learn how to use this, but I think the visual aspect makes it easier for me to see what changed what, etc…”
+* User wished for some kind of visual indicator which would make it clear that the app was processing a request, as opposed to having froze. 
+  * Maybe future work would be to add QoL improvements
+* “I like how fluid the UI is, stuff is bouncy yo”
 
