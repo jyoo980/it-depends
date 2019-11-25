@@ -54,8 +54,9 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
      * Gets all of the mentions of other classes in a class's contents.
      *
      * @param fileContents  a string representing the file's contents
+     * @param currFile      the name of the current file being read
      * @param fileNames     a list of all file names inside the directory, excluding the file which is being parsed here
-     * @returns Map<string, Array<DependencyTypes>>    map of dependencies to file names.
+     * @returns {number, Map<string, Array<DependencyTypes>>}    number of lines in file and map of dependencies to file names.
      *
      */
     public getDependenciesFromClass(fileContents: string, currFile: string, fileNames: string[]) {

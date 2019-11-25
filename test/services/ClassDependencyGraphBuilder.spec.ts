@@ -40,6 +40,8 @@ describe("ClassDependencyGraphBuilder tests", () => {
                 expect(fileDep.data[0][1]).to.contain(DependencyTypes.Dependency);
                 // Convertible extends Car
                 expect(fileDep.data[27][11]).to.contain(DependencyTypes.Inheritance);
+                // Landline implements Communicator
+                expect(fileDep.data[22][20]).to.contain(DependencyTypes.Implementation);
             }
         }
     });

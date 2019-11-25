@@ -40,7 +40,6 @@ export default class DependenciesCtrl {
     /**
      * Starts server, listens on port 8080.
      *
-     * Note: we can update return value in promise to something more useful, currently void.
      * @returns {Promise<any>}
      */
     public async start(): Promise<any> {
@@ -80,7 +79,6 @@ export default class DependenciesCtrl {
     /**
      * Stops server, useful for unit testing.
      *
-     * Note: we can update return value in promise to something more useful, currently void.
      * @returns {Promise<any>}
      */
     public async stop(): Promise<any> {
@@ -163,8 +161,6 @@ export default class DependenciesCtrl {
     }
 
     private getCrossCutFileSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // TODO: create more sample datasets to retrieve via sample URL.
-        // TODO: set up a type/ model.
         let sampleData = {
             names: ["Foo.java", "Bar.java", "Baz.java"],
             data: [
@@ -178,8 +174,6 @@ export default class DependenciesCtrl {
     }
 
     private getDependencyFileSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // TODO: create more sample datasets to retrieve via sample URL.
-        // TODO: set up a type/ model.
         let sampleData = {
             names: ["Foo.java", "Foo.java", "Bar.java"],
             data: [
@@ -193,8 +187,6 @@ export default class DependenciesCtrl {
     }
 
     private getCrossCutClassSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // TODO: create more sample datasets to retrieve via sample URL.
-        // TODO: set up a type/ model.
         let sampleData = {
             names: ["Foo", "Bar", "Baz"],
             data: [
@@ -208,8 +200,6 @@ export default class DependenciesCtrl {
     }
 
     private getDependencyClassSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // TODO: create more sample datasets to retrieve via sample URL.
-        // TODO: set up a type/model.
         let sampleData = {
             names: ["Foo", "Bar", "Baz"],
             data: [
@@ -223,8 +213,6 @@ export default class DependenciesCtrl {
     }
 
     private getCrossCutFunctionSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // TODO: create more sample datasets to retrieve via sample URL.
-        // TODO: set up a type/ model.
         let sampleData = {
             names: ["Foo.function1", "Foo.function2", "Bar.function1"],
             data: [
@@ -238,8 +226,6 @@ export default class DependenciesCtrl {
     }
 
     private getDependencyFunctionSampleData(req: restify.Request, res: restify.Response, next: restify.Next) {
-        // TODO: create more sample datasets to retrieve via sample URL.
-        // TODO: set up a type/ model.
         let sampleData = {
             names: ["Foo", "Foo.function1", "Foo.function2", "Bar.function1", "Bar"],
             data: [
