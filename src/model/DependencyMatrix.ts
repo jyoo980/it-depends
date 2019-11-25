@@ -10,4 +10,5 @@ export enum DependencyTypes {
 export class DependencyMatrix {
     names: Array<string>;
     data: Array<Array<Array<DependencyTypes>>>;
+    size: Array<number>;
 }

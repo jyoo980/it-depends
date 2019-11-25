@@ -20,11 +20,9 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
             return name.replace(/.java+$/, "");
         });
         let dependencyData = this.initializeEmptyMatrix(fileNames.length);
-
+        let fileSizes = [];
         let dependencyMatrix = new DependencyMatrix();
         dependencyMatrix.names = fileNames;
-
-        console.log(fileNames);
 
         for(let file in contents) {
             let lastIndexSlash = file.lastIndexOf("/");
@@ -33,15 +31,16 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
             let dependenciesToSearch = fileNames.filter((name) => {
                 return name !== fileName;
             });
-            let dependenciesInFile = this.getDependenciesFromFile(contents[file], dependenciesToSearch);
-
-            dependenciesInFile.forEach((dep) => {
+            let fileInfo = this.getDependenciesFromFile(contents[file], dependenciesToSearch);
+            fileInfo.dependencies.forEach((dep) => {
                 let from = fileNames.indexOf(fileName);
                 let to = fileNames.indexOf(dep);
                 dependencyData[from][to].push(DependencyTypes.References);
             });
+            fileSizes.push(fileInfo.size);
         }
         dependencyMatrix.data = dependencyData;
+        dependencyMatrix.size = fileSizes;
         return dependencyMatrix;
     }
 
@@ -60,6 +59,10 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
         let multiLineCommentRegex = RegExp("^(\\t|    )?(\\/\\*|\\*)");
 
         let dependencies = [];
+        let fileInfo = {
+            size: 0,
+            dependencies: []
+        };
 
         fileLines.forEach((line: string) => {
             // skip any import statements
@@ -79,7 +82,6 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
                     return;
                 }
 
-                // TODO: possibly clean this up
                 let spaceRegex = RegExp("( " + name + "|" + name + " )");
                 let brackRegex = RegExp("(\\(" + name + " )");
                 let collRegex = RegExp("<" + name + "|" + name + ">");
@@ -88,6 +90,8 @@ export default class FileDependencyGraphBuilder extends AbstractDependencyGraphB
                 }
             });
         });
-        return dependencies;
+        fileInfo.dependencies = dependencies;
+        fileInfo.size = fileLines.length - 1;
+        return fileInfo;
     }
 }

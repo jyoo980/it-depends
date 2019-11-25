@@ -20,6 +20,7 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
             return name.replace(/.java+$/, "");
         });
         let dependencyData = this.initializeEmptyMatrix(fileNames.length);
+        let fileSizes = [];
 
         let dependencyMatrix = new DependencyMatrix();
         dependencyMatrix.names = fileNames;
@@ -33,16 +34,18 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
             let dependenciesToSearch = fileNames.filter((name) => {
                 return name !== fileName;
             });
-            let dependenciesInFile = this.getDependenciesFromClass(contents[file], fileName, dependenciesToSearch);
+            let fileInfo = this.getDependenciesFromClass(contents[file], fileName, dependenciesToSearch);
 
-            dependenciesInFile.forEach((depVal, depKey) => {
+            fileInfo.dependencies.forEach((depVal, depKey) => {
                 let from = fileNames.indexOf(fileName);
                 let to = fileNames.indexOf(depKey);
                 depVal.forEach((dep) => {
                     dependencyData[from][to].push(dep);
                 });
             });
+            fileSizes.push(fileInfo.size);
         }
+        dependencyMatrix.size = fileSizes;
         dependencyMatrix.data = dependencyData;
         return dependencyMatrix;
     }
@@ -62,6 +65,10 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
         let multiLineCommentRegex = RegExp("^(\\t|    )?(\\/\\*|\\*)");
 
         let dependencies = new Map();
+        let fileInfo = {
+            size: 0,
+            dependencies: undefined
+        };
 
         // create empty dependency obj for each file name
         fileNames.forEach((name: string) => {
@@ -135,6 +142,8 @@ export default class ClassDependencyGraphBuilder extends AbstractDependencyGraph
                 }
             });
         });
-        return dependencies;
+        fileInfo.dependencies = dependencies;
+        fileInfo.size = fileLines.length - 1;
+        return fileInfo;
     }
 }
