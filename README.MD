@@ -21,5 +21,9 @@ For a more detailed breakdown of contributions, please read [here](./contributor
 * [Sam Veloso](https://github.com/scveloso)
 * [Slava Uryumtsev](https://github.com/uslava77)
 * [David Li](https://github.com/daviidli)
-* [Kiyomi KH](https://github.com/kiyomih)
+* [Kiyomi H](https://github.com/kiyomih)
 * [James Yoo](https://github.com/jyoo980)
+
+## Design work and user study results
+
+You can read about the intent of our visualization, the original design, the outcomes of our prototype testing and resulting design changes, and the outcomes of our final end-user testing [here](./writeup.md). 
