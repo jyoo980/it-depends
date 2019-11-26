@@ -18,7 +18,7 @@ I worked on the analysis of cross-cut dependencies. These are dependencies refle
 #### Selected Contributions  
 * `CrossCutAnalyzer.ts`
 * `DependenciesCtrl.ts`
-* `.gitlab-ci.tml`  
+* `.gitlab-ci.yml`  
 
 ## [David Li](https://github.com/daviidli)
 
