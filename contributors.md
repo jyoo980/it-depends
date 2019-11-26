@@ -11,7 +11,14 @@ I worked on extracting information required for building dependencies across met
 * `MethodDependencyBuilder.ts`
 * `Method.ts`
 
-## [Slava Uryumtsev](https://github.com/uslava77)
+## [Slava Uryumtsev](https://github.com/uslava77)  
+
+I worked on the analysis of cross-cut dependencies. These are dependencies reflecting the likelihood of changing other files/methods when a change is made to a file/method. Given data on which files were changed in which commits (James code) and data on which methods were changed in which commits (Sams code), I built matrices with entries that correspond to how many commits method/file i and method/file j were both changed. Then, this matrix was scaled in each row based on the total for that row. Now, each entry is the percentage of all commits of i where j was also changed. I also worked on a CD pipeline that deploys our backend on [heroku](https://it-depends.herokuapp.com) with an example query result that looks like [this](https://it-depends.herokuapp.com/crosscut/file?start=0&end=40&url=https://github.com/jyoo980/it-depends). I made minor contributions to setting up the endpoints.  
+
+#### Selected Contributions  
+* `CrossCutAnalyzer.ts`
+* `DependenciesCtrl.ts`
+* `.gitlab-ci.tml`  
 
 ## [David Li](https://github.com/daviidli)
 
