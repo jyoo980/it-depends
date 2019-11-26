@@ -2,9 +2,17 @@
 
 ![viz-screenshot](./media/it-depends-viz.png)
 
+![Link to visualization](https://daviidli.github.io/it-depends-vis/)
+
+
 This is a repository for it-depends. This tool enables developers to more easily visualize dependencies between
 entities in a software system (classes, files, etc...) which cut across commit history. Development is currently in the 
 early stages, so changes to this repo will be constant.
+
+
+![Link to visualization](https://daviidli.github.io/it-depends-vis/)
+
+The link above will navigate to an instance of `it-depends`. Keep in mind that this is a PoC, and as such, there are bugs! Help us out by opening issues to report bugs! 🔍 🐛
 
 ## Dependencies
 * yarn (>= v1.17.3)
