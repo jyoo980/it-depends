@@ -16,11 +16,9 @@ export default class MethodDependencyBuilder {
     liveRestClient: RestClient;
     liveCache: GitCommitCache;
 
-    constructor() {
+    constructor(ghService: GithubService) {
         this.methodParser = new MethodParser();
-        this.liveRestClient = new RestClient();
-        this.liveCache = new GitCommitCache();
-        this.ghService = new GithubService(this.liveRestClient, this.liveCache);
+        this.ghService = ghService;
     }
 
     /**

@@ -1,9 +1,10 @@
 import MethodDependencyBuilder from "../../src/services/MethodDependencyBuilder";
 import {expect} from "chai";
+import DependenciesCtrl from "../../src/rest/DependenciesCtrl";
 
 describe("MethodDependencyBuilder tests", function () {
     this.timeout(10000);
-    let mdb: MethodDependencyBuilder = new MethodDependencyBuilder();
+    let mdb: MethodDependencyBuilder = new MethodDependencyBuilder(DependenciesCtrl.getGHService());
 
     it("a method that was changed in three commits should contain those three commits", async () => {
         let getResultsMethod = "src/ca/ubc/cs/cs317/dnslookup/DNSLookupService.java/getResults";
