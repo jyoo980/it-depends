@@ -2,10 +2,7 @@
 
 ![viz-screenshot](./media/it-depends-viz.png)
 
-This is a repository for it-depends. This tool enables developers to more easily visualize dependencies between
-entities in a software system (classes, files, etc...) which cut across commit history. Development is currently in the 
-early stages, so changes to this repo will be constant.
-
+Developers often encounter trouble traversing the information space of a large software system with extensive revision history. Looking through a list of commits is time-consuming, and fails to convey information in a form which efficiently communicates information about the system. `it-depends` is a visualization which makes it easier for developers and managers to understand the dependencies between entities in a software system across commits.
 
 [Link to visualization](https://daviidli.github.io/it-depends-vis/)
 
