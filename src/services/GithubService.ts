@@ -44,16 +44,17 @@ export default class GithubService {
     }
 
     private async getMoreCommits(retrievedCommits: Array<CommitInfo>, repoUrl: string): Promise<Array<CommitInfo>> {
+        const minute: number = 60000;
         const offsetDateByMinute = (latestCommitTime) => {
-            return new Date(new Date(latestCommitTime).getTime() - 60000).toISOString();
+            return new Date(new Date(latestCommitTime).getTime() - minute).toISOString();
         };
 
         let dateUpTo: string;
         if (retrievedCommits.length === 0) {
             dateUpTo = new Date().toISOString();
         } else {
-            const latestCommitTime = retrievedCommits[retrievedCommits.length - 1].date;
-            dateUpTo = offsetDateByMinute(latestCommitTime);
+            const lastButOneCommitTime = retrievedCommits[retrievedCommits.length - 1].date;
+            dateUpTo = offsetDateByMinute(lastButOneCommitTime);
         }
         const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateUpTo);
         const rawCommits = await this.restClient.get(requestUrl);
