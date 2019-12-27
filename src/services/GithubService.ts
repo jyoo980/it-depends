@@ -26,17 +26,17 @@ export default class GithubService {
     public async getAndSaveAllCommits(repoUrl: string): Promise<Array<CommitInfo>> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
-            if (!historyExists) {
-                let totalNumCommits = await this.getNumCommits(repoUrl);
-                let retrievedCommits: Array<CommitInfo> = new Array<CommitInfo>();
-                while (retrievedCommits.length < totalNumCommits) {
-                    const commits = await this.getMoreCommits(retrievedCommits, repoUrl);
-                    retrievedCommits = retrievedCommits.concat(commits);
-                }
-                await this.cache.persistCommits(repoUrl, retrievedCommits);
-                return retrievedCommits;
+            if (historyExists) {
+                return await this.cache.getCommitData(repoUrl);
             }
-            return await this.cache.getCommitData(repoUrl);
+            const totalNumCommits = await this.getNumCommits(repoUrl);
+            let retrievedCommits: Array<CommitInfo> = new Array<CommitInfo>();
+            while (retrievedCommits.length < totalNumCommits) {
+                const commits = await this.getMoreCommits(retrievedCommits, repoUrl);
+                retrievedCommits = retrievedCommits.concat(commits);
+            }
+            await this.cache.persistCommits(repoUrl, retrievedCommits);
+            return retrievedCommits;
         } catch (err) {
             console.warn(`GithubService::Error while getting commits from: ${repoUrl}`);
             throw { message: err.message } as GithubServiceError
@@ -44,34 +44,22 @@ export default class GithubService {
     }
 
     private async getMoreCommits(retrievedCommits: Array<CommitInfo>, repoUrl: string): Promise<Array<CommitInfo>> {
+        const minute: number = 60000;
         const offsetDateByMinute = (latestCommitTime) => {
-            return new Date(new Date(latestCommitTime).getTime() - 60000).toISOString();
+            return new Date(new Date(latestCommitTime).getTime() - minute).toISOString();
         };
 
         let dateUpTo: string;
         if (retrievedCommits.length === 0) {
             dateUpTo = new Date().toISOString();
         } else {
-            const latestCommitTime = retrievedCommits[retrievedCommits.length - 1].date;
-            dateUpTo = offsetDateByMinute(latestCommitTime);
+            const lastButOneCommitTime = retrievedCommits[retrievedCommits.length - 1].date;
+            dateUpTo = offsetDateByMinute(lastButOneCommitTime);
         }
         const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateUpTo);
         const rawCommits = await this.restClient.get(requestUrl);
         const commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
         return await this.hydrateCommits(repoUrl, commitSHAs);
-    }
-
-    public async listCommitsUpTo(repoUrl: string, upTo: number): Promise<Array<CommitInfo>> {
-        try {
-            const historyExists: boolean = await this.cache.exists(repoUrl);
-            if (!historyExists) {
-                await this.getAndSaveAllCommits(repoUrl);
-            }
-            return await this.cache.readCommitsUpTo(repoUrl, upTo);
-        } catch (err) {
-            console.warn(`GithubService::Error while listing commits from: ${repoUrl}`);
-            throw { message: err.message } as GithubServiceError;
-        }
     }
 
     public async listCommitsBetween(repoUrl: string, startIndex: number, endIndex: number): Promise<Array<CommitInfo>> {
