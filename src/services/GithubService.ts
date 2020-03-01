@@ -18,7 +18,7 @@ export default class GithubService {
 
     constructor(restClient: IRestClient, cache: ICommitCache) {
         this.restClient = restClient;
-        this.urlBuilder = new URLBuilder( AccessTokenManager.getGithubAccessToken());
+        this.urlBuilder = new URLBuilder(AccessTokenManager.getGithubAccessToken());
         this.responseParser = new ResponseParser();
         this.cache = cache;
     }
@@ -44,22 +44,23 @@ export default class GithubService {
     }
 
     private async getMoreCommits(retrievedCommits: Array<CommitInfo>, repoUrl: string): Promise<Array<CommitInfo>> {
-        const minute: number = 60000;
-        const offsetDateByMinute = (latestCommitTime) => {
-            return new Date(new Date(latestCommitTime).getTime() - minute).toISOString();
-        };
-
-        let dateUpTo: string;
-        if (retrievedCommits.length === 0) {
-            dateUpTo = new Date().toISOString();
-        } else {
-            const lastButOneCommitTime = retrievedCommits[retrievedCommits.length - 1].date;
-            dateUpTo = offsetDateByMinute(lastButOneCommitTime);
-        }
+        const dateUpTo = this.getDateOfLastCommit(retrievedCommits);
         const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateUpTo);
         const rawCommits = await this.restClient.get(requestUrl);
         const commitSHAs = this.responseParser.getCommitSHAs(rawCommits.body);
         return await this.hydrateCommits(repoUrl, commitSHAs);
+    }
+
+    private getDateOfLastCommit(commits: Array<CommitInfo>): string {
+        const offsetByMinute = (time) => {
+            const offsetTime: number = new Date(time).getTime() - 60_000;
+            return new Date(offsetTime).toISOString();
+        };
+        if (commits.length === 0) {
+            return new Date().toISOString();
+        }
+        const lastButOneCommitTime = commits[commits.length - 1].date;
+        return offsetByMinute(lastButOneCommitTime);
     }
 
     public async listCommitsBetween(repoUrl: string, startIndex: number, endIndex: number): Promise<Array<CommitInfo>> {
