@@ -90,6 +90,8 @@ export default class URLBuilder {
      * https://developer.github.com/v3/repos/contents/#get-archive-link
      *
      * @param repoUrl the url of the repo for which we want to build the url
+     * @param commitSha optional - the commit hash representing the repository state at which we want to retrieve
+     * repository information.
      */
     public buildGetRepoUrl(repoUrl: string, commitSha?: string): string {
         const owner: string = this.getOwner(repoUrl);
