@@ -4,7 +4,7 @@ import {CommitInfo} from "../interfaces/GitHubTypes";
 export interface ICommitCache {
     exists(repoUrl: string): Promise<boolean>;
     getCommitData(repoUrl: string);
-    persistCommits(repoUrl: string, commitInfo: Array<CommitInfo>): Promise<void>;
+    persistCommits(repoUrl: string, commitInfo: CommitInfo[]): Promise<void>;
     readCommitsUpTo(repoUrl: string, upTo: number);
     readCommitsBetween(repoUrl: string, startIndex: number, endIndex: number);
     writeRepoToDisk(dir: string, repoName: string, content: any): Promise<string>
@@ -13,7 +13,7 @@ export interface ICommitCache {
 export default class GitCommitCache implements ICommitCache {
 
     private readonly fileSystem: FileSystem;
-    private readonly commitCache: Map<string, Array<CommitInfo>>;
+    private readonly commitCache: Map<string, CommitInfo[]>;
 
     constructor() {
         this.fileSystem = new FileSystem();
@@ -33,7 +33,7 @@ export default class GitCommitCache implements ICommitCache {
         }
     }
 
-    public async persistCommits(repoUrl: string, commitInfo: Array<CommitInfo>): Promise<void> {
+    public async persistCommits(repoUrl: string, commitInfo: CommitInfo[]): Promise<void> {
         const key = this.stripRepoName(repoUrl);
         this.commitCache.set(key, commitInfo);
         const commitsToWrite = JSON.stringify(commitInfo);
@@ -41,29 +41,29 @@ export default class GitCommitCache implements ICommitCache {
     }
 
     public async readCommitsUpTo(repoUrl: string, upTo: number) {
-        const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
+        const commitData: CommitInfo[] = await this.getCommitData(repoUrl);
         return this.filterCommitsBefore(commitData, upTo);
     }
 
     public async readCommitsBetween(repoUrl: string, startIndex: number, endIndex: number) {
-        const commitData: Array<CommitInfo> = await this.getCommitData(repoUrl);
+        const commitData: CommitInfo[] = await this.getCommitData(repoUrl);
         return this.filterCommitsBetween(commitData, startIndex, endIndex);
     }
 
-    public async getCommitData(repoUrl: string): Promise<Array<CommitInfo>> {
+    public async getCommitData(repoUrl: string): Promise<CommitInfo[]> {
         const key = this.stripRepoName(repoUrl);
         if (this.commitCache.has(key)) {
             return this.commitCache.get(key);
         }
         const rawData = await this.fileSystem.read("./data", `${key}.txt`);
-        return JSON.parse(rawData) as Array<CommitInfo>;
+        return JSON.parse(rawData) as CommitInfo[];
     }
 
-    public filterCommitsBefore(commits: Array<CommitInfo>, upTo: number): Array<CommitInfo> {
+    public filterCommitsBefore(commits: CommitInfo[], upTo: number): CommitInfo[] {
         return commits.slice(0, upTo);
     }
 
-    public filterCommitsBetween(commits: Array<CommitInfo>, startIndex: number, endIndex: number): Array<CommitInfo> {
+    public filterCommitsBetween(commits: CommitInfo[], startIndex: number, endIndex: number): CommitInfo[] {
         return commits.slice(startIndex, endIndex);
     }
 

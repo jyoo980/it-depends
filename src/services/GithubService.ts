@@ -23,14 +23,14 @@ export default class GithubService {
         this.cache = cache;
     }
 
-    public async getAndSaveAllCommits(repoUrl: string): Promise<Array<CommitInfo>> {
+    public async getAndSaveAllCommits(repoUrl: string): Promise<CommitInfo[]> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (historyExists) {
                 return await this.cache.getCommitData(repoUrl);
             }
             const totalNumCommits = await this.getNumCommits(repoUrl);
-            let retrievedCommits: Array<CommitInfo> = new Array<CommitInfo>();
+            let retrievedCommits: CommitInfo[] = [];
             while (retrievedCommits.length < totalNumCommits) {
                 const commits = await this.getMoreCommits(retrievedCommits, repoUrl);
                 retrievedCommits = retrievedCommits.concat(commits);
@@ -43,7 +43,7 @@ export default class GithubService {
         }
     }
 
-    private async getMoreCommits(retrievedCommits: Array<CommitInfo>, repoUrl: string): Promise<Array<CommitInfo>> {
+    private async getMoreCommits(retrievedCommits: CommitInfo[], repoUrl: string): Promise<CommitInfo[]> {
         const dateUpTo = this.getDateOfLastCommit(retrievedCommits);
         const requestUrl = this.urlBuilder.buildListCommitsUrl(repoUrl, dateUpTo);
         const rawCommits = await this.restClient.get(requestUrl);
@@ -51,7 +51,7 @@ export default class GithubService {
         return await this.hydrateCommits(repoUrl, commitSHAs);
     }
 
-    private getDateOfLastCommit(commits: Array<CommitInfo>): string {
+    private getDateOfLastCommit(commits: CommitInfo[]): string {
         const offsetByMinute = (time) => {
             const offsetTime: number = new Date(time).getTime() - 60_000;
             return new Date(offsetTime).toISOString();
@@ -63,7 +63,7 @@ export default class GithubService {
         return offsetByMinute(lastButOneCommitTime);
     }
 
-    public async listCommitsBetween(repoUrl: string, startIndex: number, endIndex: number): Promise<Array<CommitInfo>> {
+    public async listCommitsBetween(repoUrl: string, startIndex: number, endIndex: number): Promise<CommitInfo[]> {
         try {
             const historyExists: boolean = await this.cache.exists(repoUrl);
             if (!historyExists) {
@@ -109,7 +109,7 @@ export default class GithubService {
         }
     }
 
-    private async hydrateCommits(repoUrl: string, commitSHAs: Array<string>): Promise<Array<CommitInfo>> {
+    private async hydrateCommits(repoUrl: string, commitSHAs: string[]): Promise<CommitInfo[]> {
         const detailedCommitRequests = commitSHAs.map((sha) => {
             const url = this.urlBuilder.buildGetSingleCommitUrl(repoUrl, sha);
             return this.restClient.get(url);
