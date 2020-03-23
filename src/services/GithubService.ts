@@ -25,8 +25,8 @@ export default class GithubService {
 
     public async getAndSaveAllCommits(repoUrl: string): Promise<Array<CommitInfo>> {
         try {
-            const historyExists: boolean = await this.cache.exists(repoUrl);
-            if (historyExists) {
+            const isInCache: boolean = await this.cache.exists(repoUrl);
+            if (isInCache) {
                 return await this.cache.getCommitData(repoUrl);
             }
             const totalNumCommits = await this.getNumCommits(repoUrl);
@@ -65,8 +65,8 @@ export default class GithubService {
 
     public async listCommitsBetween(repoUrl: string, startIndex: number, endIndex: number): Promise<Array<CommitInfo>> {
         try {
-            const historyExists: boolean = await this.cache.exists(repoUrl);
-            if (!historyExists) {
+            const isInCache: boolean = await this.cache.exists(repoUrl);
+            if (!isInCache) {
                 await this.getAndSaveAllCommits(repoUrl);
             }
             return await this.cache.readCommitsBetween(repoUrl, startIndex, endIndex);
