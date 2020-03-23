@@ -9,13 +9,13 @@ export default class ResponseParser {
         this.patchParser = new PatchParser();
     }
 
-    public buildCommitMap(rawCommitData: Array<any>): Array<CommitInfo> {
+    public buildCommitMap(rawCommitData: any[]): CommitInfo[] {
         return rawCommitData.map((rawCommit) => {
             return this.extractCommitInfo(rawCommit);
         });
     }
 
-    public getCommitSHAs(rawCommitData: Array<any>): Array<string> {
+    public getCommitSHAs(rawCommitData: any[]): string[] {
         return rawCommitData.map((data) => data["sha"]);
     }
 
@@ -31,7 +31,7 @@ export default class ResponseParser {
         } as CommitInfo;
     }
 
-    public extractFileInfo(rawFileInfo: any[]): Array<FileInfo> {
+    public extractFileInfo(rawFileInfo: any[]): FileInfo[] {
         return rawFileInfo.map((fileInfo) => {
             return {
                 name: fileInfo["filename"],
