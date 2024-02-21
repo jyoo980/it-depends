@@ -21,7 +21,7 @@
     "@types/mocha": "^8.0.1",
     "@types/restify": "^8.4.1",
     "@types/typescript": "^2.0.0",
-    "axios": "^0.21.2",
+    "axios": "^0.28.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "fp-ts": "^2.8.1",
